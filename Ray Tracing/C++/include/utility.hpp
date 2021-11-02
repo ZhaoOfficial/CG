@@ -3,16 +3,7 @@
 
 #include <cmath>
 #include <limits>
-#include <memory>
 #include <random>
-#include <functional>
-
-// Usings
-
-using std::shared_ptr;
-using std::make_shared;
-using std::sqrt;
-using std::fabs;
 
 // Constants
 

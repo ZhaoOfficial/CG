@@ -179,9 +179,11 @@ Sphere surface-normal is a vector from the center to a point on sphere.
 
 这个法向量指向球面外侧, 但为了区分内外, 我们也需要内法向. 为方便判断, 我们存储外法向, 通过点乘判断光线从内还是外发射. 
 
-## Antialiasing
+一条光线可能和很多的东西都会相交, 因此我们选择最近的那个物体.
 
-真实的相机拍出来的图片,　物体的周围都不是锯齿状的, 都会和旁边的像素进行混合. 
+## Anti-aliasing
+
+真实的相机拍出来的图片, 物体的周围都不是锯齿状的, 都会和旁边的像素进行混合. 
 When a real camera takes a picture, there are usually no jaggies along edges because the edge pixels are a blend of some foreground and some background.
 
 每个像素点多采样几次, 采样时候给横向和纵向一个扰动, 使得在边缘时候光线不一定严格落在球的范围内(外), 多次采样取平均即可得到该点像素. 

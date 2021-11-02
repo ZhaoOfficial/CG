@@ -34,7 +34,7 @@ vec3 refract(const vec3& r_in, const vec3& normal, float refraction_ratio) {
 class material {
 public:
     virtual bool scatter(
-        const ray& r_in, const vec3& hit_point, const vec3& normal, bool front_face, color& attenuation, ray& scattered
+        const ray& r_in, const vec3& hit_point, const vec3& normal, color& attenuation, ray& scattered
     ) const = 0;
 };
 
@@ -43,9 +43,9 @@ public:
     lambertian(const color& a) : albedo(a) {}
 
     virtual bool scatter(
-        const ray& r_in, const vec3& hit_point, const vec3& normal, bool front_face, color& attenuation, ray& scattered
+        const ray& r_in, const vec3& hit_point, const vec3& normal, color& attenuation, ray& scattered
     ) const override {
-        vec3 scatter_direction = normal + vec3::random_in_unit_sphere();
+        vec3 scatter_direction = normal + random_in_unit_sphere();
         if (scatter_direction.near_zero())
             scatter_direction = normal;
         scattered = ray(hit_point, scatter_direction);
@@ -62,10 +62,10 @@ public:
     metal(const color& a, float f) : albedo(a), fuzz(f < 1.0f ? f : 1.0f) {}
 
     virtual bool scatter(
-        const ray& r_in, const vec3& hit_point, const vec3& normal, bool front_face, color& attenuation, ray& scattered
+        const ray& r_in, const vec3& hit_point, const vec3& normal, color& attenuation, ray& scattered
     ) const override {
         vec3 reflected = reflect(r_in.direction().unit_vector(), normal);
-        scattered = ray(hit_point, reflected + fuzz * vec3::random_in_unit_sphere());
+        scattered = ray(hit_point, reflected + fuzz * random_in_unit_sphere());
         attenuation = albedo;
         return scattered.direction().dot(normal) > 0.0f;
     }
@@ -80,7 +80,7 @@ public:
     dielectric(float index_of_refraction) : refraction_rate(index_of_refraction) {}
 
     virtual bool scatter(
-        const ray& r_in, const vec3& hit_point, const vec3& normal, bool front_face, color& attenuation, ray& scattered
+        const ray& r_in, const vec3& hit_point, const vec3& normal, color& attenuation, ray& scattered
     ) const override {
         float refraction_ratio = front_face ? (1.0f / refraction_rate) : refraction_rate;
 
