@@ -120,7 +120,7 @@ Aperture
 
 Super‐sampling
 
-# Ray Tracing in One Weekend
+# Ray Tracing: In One Weekend
 
 ## Output an Image
 
@@ -201,15 +201,23 @@ Really any algorithm that randomizes direction will produce surfaces that look m
 
 漫反射一个比较好的模型是 Lambertian Reflection. 
 
-我们改为在单位外切球面上选取点，就可以满足漫反射所需的 $\cos$ 条件。
+我们改为在单位外切球面上选取点，就可以满足漫反射所需的 $\cos$ 条件.
 
 ## Metal
 
-金属是镜面反射. 
+对于漫反射材料, 它即可以看作一直散射并且每次衰减反射率的亮度, 也可以看作不衰减但是每次都吸收部分的光, 也可以将二者结合.
+For the Lambertian (diffuse) case we already have, it can either scatter always and attenuate by its reflectance $R$, or it can scatter with no attenuation but absorb the fraction $1−R$ of the rays, or it could be a mixture of those strategies.
+
+金属是镜面反射. 对于镜面反射, 如果法向是 $\mathbf n$, 入射光线是 $\mathbf v$, 则反射光线是:
+$$
+\mathbf v_{\parallel}-\mathbf v_{\perp}=\mathbf v-2\mathbf v_{\perp}=\mathbf v-2(\mathbf v\cdot\mathbf n)\mathbf n
+$$
+对于反射, 我们可以使得反射光线产生微小偏移, 即在出射方向增加一个微小的偏移. 
 
 ## Dielectrics
 
-透光介质在光射入时候会产生折射光线和反射光线. When a light ray hits them, it splits into a reflected ray and a refracted (transmitted) ray.
+电介质在光射入时候会产生折射光线和反射光线.
+When a light ray hits them, it splits into a reflected ray and a refracted (transmitted) ray.
 
 Snell's Law
 $$
@@ -224,24 +232,46 @@ $$
 其中
 $$
 \begin{align*}
-\mathbf r_{\perp}&=\mathbf r-\cos\theta_1\mathbf n\\
-\mathbf r_{\parallel}&=\sqrt{1-|\mathbf r_{\perp}|^2}\mathbf n
+\mathbf r_{\perp}&=\mathbf r-\cos\theta_1\mathbf n
 \end{align*}
 $$
-则单位折射光线 $\mathbf r'$ 可以表示为
+折射光线的垂直分量和入射光线的垂直分量满足 Snell‘s law. 则单位折射光线 $\mathbf r'$ 可以表示为:
 $$
 \mathbf r'_{\perp}=\frac{n_1}{n_2}(\mathbf r-\cos\theta_1\mathbf n)\quad\cos\theta_1=\mathbf r\cdot\mathbf n\\
+\mathbf r'_{\parallel}=-(\sqrt{1-\mathbf r'^2_{\perp}})\mathbf n\\
 \mathbf r'=\mathbf r'_{\perp}+\mathbf r'_{\parallel}
 $$
 
+光线在进入电介质时候和出电介质时候的折射率是成倒数的.
+
+考虑全反射现象, 即光密介质到光疏介质时, 折射率和入射角的正弦值的积大于 1 时候就会发生. 
+
+考虑极化现象, 即电解质大角度观察镜面反射分量会增加.
+
 ## Positionable Camera
 
-Field of View (*fov*)
+视野角是相机上下可以观察的角度. 长焦视野角小.
+Field of View (*fov*). This is the angle you see through the portal.
 
-We’ll call the position where we place the camera *lookfrom*, and the point we look at *lookat*.
+相机从所在位置看向目标位置, 所成的向量就是前方向. 和给定的上方向得到右方向, 再得到相机的上方向.
 
-## Defocus Blur
+## Depth of Field
 
-Depth of Field
+我们在真实相机中散焦模糊的原因是因为它们需要一个大洞 (而不仅仅是一个针孔) 来收集光线. 这会使所有东西散焦, 但是如果我们在孔中插入一个镜头, 那么所有东西都会在一定距离处聚焦.
+The reason we defocus blur in real cameras is because they need a big hole (rather than just a pinhole) to gather light. This would defocus everything, but if we stick a lens in the hole, there will be a certain distance where everything is in focus.
 
-我们假设所有光线都刚好在相机镜头上汇聚成像了. 但事实上可能由于镜头畸变和景深, 成像可能并不会完全清晰. 
+图形学里面, 我们假设所有光线都刚好在相机镜头上汇聚成像了. 但事实上可能由于镜头畸变和景深, 成像可能并不会完全清晰. 
+
+通常, 所有场景光线都来自观察点. 为了实现散焦模糊, 生成源自以观察点为中心的圆盘内部的随机场景光线. 半径越大, 散焦模糊越大. 您可以将我们的原始相机视为具有半径为零的散焦盘 (根本没有模糊), 因此所有光线都起源于盘中心.
+Normally, all scene rays originate from the lookfrom point. In order to accomplish defocus blur, generate random scene rays originating from inside a disk centered at the lookfrom point. The larger the radius, the greater the defocus blur. You can think of our original camera as having a defocus disk of radius zero (no blur at all), so all rays originated at the disk center (lookfrom).
+
+# Ray Tracing: The Next Week
+
+## Motion Blur
+
+
+
+
+
+
+

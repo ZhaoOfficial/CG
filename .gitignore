@@ -2,4 +2,8 @@ python-opengl
 tutorial
 rust
 Raytracing
-.ppm
+build
+.vscode
+
+
+*.ppm
