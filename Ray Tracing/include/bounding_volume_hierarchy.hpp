@@ -1,5 +1,5 @@
 #ifndef _BOUNDING_VOLUME_HIERARCHY_HPP_
-#define _BOUNDING_VOLUME_HIERARCHY_HPP
+#define _BOUNDING_VOLUME_HIERARCHY_HPP_
 
 #include <memory>
 #include <vector>

@@ -237,7 +237,7 @@ RayTracing::HittableList finalScene() {
     boundary = std::make_shared<RayTracing::Sphere>(RayTracing::Point3(0.0f, 0.0f, 0.0f), 5000.0f, std::make_shared<RayTracing::Dielectric>(1.5f));
     world.add(std::make_shared<RayTracing::ConstantMedium>(boundary, 1e-4f, RayTracing::Color(1.0f, 1.0f, 1.0f)));
 
-    auto emat = std::make_shared<RayTracing::Lambertian>(std::make_shared<RayTracing::ImageTexture>("earthmap.jpg"));
+    auto emat = std::make_shared<RayTracing::Lambertian>(std::make_shared<RayTracing::ImageTexture>("D:/Mywork/Computer Graphics/Ray Tracing/image/earthmap.jpg"));
     world.add(std::make_shared<RayTracing::Sphere>(RayTracing::Point3(400.0f, 200.0f, 400.0f), 100.0f, emat));
     auto pertext = std::make_shared<RayTracing::NoiseTexture>(0.1f);
     world.add(std::make_shared<RayTracing::Sphere>(RayTracing::Point3(220.0f, 280.0f, 300.0f), 80.0f, std::make_shared<RayTracing::Lambertian>(pertext)));
@@ -246,7 +246,7 @@ RayTracing::HittableList finalScene() {
     auto white = std::make_shared<RayTracing::Lambertian>(RayTracing::Color(0.73f, 0.73f, 0.73f));
     int ns = 1000;
     for (int j = 0; j < ns; j++) {
-        boxes2.add(std::make_shared<RayTracing::Sphere>(RayTracing::random_in_unit_sphere() * 165.f, 10.0f, white));
+        boxes2.add(std::make_shared<RayTracing::Sphere>(RayTracing::random_in_unit_cube() * 165.0f, 10.0f, white));
     }
 
     world.add(
@@ -264,9 +264,8 @@ int main() {
     //! image setting
     int image_width = 600;
     int image_height = 600;
-    int samples_per_pixel = 50;
+    int samples_per_pixel = 100;
     int max_depth = 50;
-    int thread_num = 12;
 
     //! world
     RayTracing::HittableList world;
@@ -324,6 +323,7 @@ int main() {
         case 8:
             world = finalScene();
             aspect_ratio = 1.0f;
+            image_width = static_cast<int>(aspect_ratio * static_cast<float>(image_height));
             background = RayTracing::Color(0.0f, 0.0f, 0.0f);
             lookfrom = RayTracing::Point3(478.0f, 278.0f, -600.0f);
             lookat = RayTracing::Point3(278.0f, 278.0f, 0.0f);
@@ -342,7 +342,6 @@ int main() {
     );
     
     //! render
-    omp_set_num_threads(thread_num);
     std::vector<unsigned char> image_pixels(image_width * image_height * 3);
 
     int row = 0;
@@ -350,7 +349,7 @@ int main() {
 
     //* (0, 0) is at left down of image
     //* The rows are written out from top to bottom.
-    #pragma omp parallel for default(shared) schedule(guided, 2)
+    #pragma omp parallel for default(shared) schedule(dynamic, 5)
     for (int j = 0; j < image_height; ++j) {
         #pragma omp atomic
         ++row;

@@ -2,10 +2,10 @@
 
 namespace RayTracing {
 
-    AABB::AxisAlignedBoundingBox() {}
-    AABB::AxisAlignedBoundingBox(const Point3& minimum, const Point3& maximum) : minimum(minimum), maximum(maximum) {}
+    AxisAlignedBoundingBox::AxisAlignedBoundingBox() {}
+    AxisAlignedBoundingBox::AxisAlignedBoundingBox(const Point3& minimum, const Point3& maximum) : minimum(minimum), maximum(maximum) {}
 
-    bool AABB::hit(const Ray& r, float t_min, float t_max) const {
+    bool AxisAlignedBoundingBox::hit(const Ray& r, float t_min, float t_max) const {
         for (int i = 0; i < 3; ++i) {
             float inv_d = r.direction[i];
             float t0 = (minimum[i] - r.origin[i]) / inv_d;

@@ -6,12 +6,12 @@
 
 namespace RayTracing {
 
-    BVH::BoundingVolumeHierarchy() {}
+    BoundingVolumeHierarchy::BoundingVolumeHierarchy() {}
 
-    BVH::BoundingVolumeHierarchy(const HittableList& list, float time0, float time1)
+    BoundingVolumeHierarchy::BoundingVolumeHierarchy(const HittableList& list, float time0, float time1)
     : BoundingVolumeHierarchy(list.objects, 0, list.objects.size(), time0, time1) {}
 
-    BVH::BoundingVolumeHierarchy(const std::vector<std::shared_ptr<Hittable>>& objects, size_t start, size_t finish, float time0, float time1) {
+    BoundingVolumeHierarchy::BoundingVolumeHierarchy(const std::vector<std::shared_ptr<Hittable>>& objects, size_t start, size_t finish, float time0, float time1) {
         std::vector<std::shared_ptr<Hittable>> obj_copy = objects;
 
         size_t object_span = finish - start;
@@ -48,7 +48,7 @@ namespace RayTracing {
 
     }
 
-    bool BVH::box_compare(
+    bool BoundingVolumeHierarchy::box_compare(
         const std::shared_ptr<Hittable>& a,
         const std::shared_ptr<Hittable>& b,
         int axis
@@ -56,13 +56,14 @@ namespace RayTracing {
         AABB aabb0;
         AABB aabb1;
 
-        if (a->bounding_box(0, 0, aabb0) == false || b->bounding_box(0, 0, aabb1))
-            std::cout << "No bounding box in BVH constructor.\n";
+        a->bounding_box(0, 0, aabb0);
+        b->bounding_box(0, 0, aabb1);
+
         return aabb0.minimum[axis] < aabb1.minimum[axis];
     }
 
-    bool BVH::hit(const Ray& r, float t_min, float t_max, HitRecord& rec) const {
-        if (this->bvh_box.hit(r, t_min, t_max))
+    bool BoundingVolumeHierarchy::hit(const Ray& r, float t_min, float t_max, HitRecord& rec) const {
+        if (this->bvh_box.hit(r, t_min, t_max) == false)
             return false;
         
         bool hit_left = this->left->hit(r, t_min, t_max, rec);
@@ -71,12 +72,12 @@ namespace RayTracing {
         return hit_left || hit_right;
     }
 
-    bool BVH::bounding_box(float t_min, float t_max, AABB& aabb) const {
+    bool BoundingVolumeHierarchy::bounding_box(float t_min, float t_max, AABB& aabb) const {
         aabb = this->bvh_box;
         return true;
     }
 
-    bool BVH::scatter(
+    bool BoundingVolumeHierarchy::scatter(
         const Ray& r, HitRecord& rec, Color& attenuation, Ray& scattered
     ) const {
         return false;
