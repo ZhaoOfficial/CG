@@ -28,4 +28,10 @@ inline float uniform_float(float a = 0.0f, float b = 1.0f) {
     return uniform(rng);
 }
 
+inline int uniform_int(int a = 0, int b = 1) {
+    std::uniform_int_distribution<int> uniform(a, b);
+    static std::default_random_engine rng;
+    return uniform(rng);
+}
+
 #endif // !_UTILITY_HPP_

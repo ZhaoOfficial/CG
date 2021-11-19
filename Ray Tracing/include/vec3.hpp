@@ -6,11 +6,11 @@
 
 namespace RayTracing {
 
-    class vec3 {
+    class Vec3 {
     public:
         // constructor
-        vec3();
-        vec3(float v1, float v2, float v3);
+        Vec3();
+        Vec3(float v1, float v2, float v3);
 
         // access function
         float x() const;
@@ -23,19 +23,19 @@ namespace RayTracing {
         float& operator[](int i);
 
         // operator overload
-        vec3 operator+(const vec3& other) const;
-        vec3 operator-(const vec3& other) const;
-        vec3 operator-() const;
-        vec3 operator*(const vec3& other) const;
-        vec3 operator*(float t) const;
-        vec3 operator/(float t) const;
-        friend vec3 operator*(float t, const vec3& vec);
-        friend vec3 operator/(float t, const vec3& vec);
+        Vec3 operator+(const Vec3& other) const;
+        Vec3 operator-(const Vec3& other) const;
+        Vec3 operator-() const;
+        Vec3 operator*(const Vec3& other) const;
+        Vec3 operator*(float t) const;
+        Vec3 operator/(float t) const;
+        friend Vec3 operator*(float t, const Vec3& vec);
+        friend Vec3 operator/(float t, const Vec3& vec);
 
-        vec3& operator+=(const vec3& other);
-        vec3& operator-=(const vec3& other);
-        vec3& operator*=(const float t);
-        vec3& operator/=(const float t);
+        Vec3& operator+=(const Vec3& other);
+        Vec3& operator-=(const Vec3& other);
+        Vec3& operator*=(const float t);
+        Vec3& operator/=(const float t);
 
         // member function
         float length_squared() const;
@@ -47,21 +47,21 @@ namespace RayTracing {
         float v[3];
     };
 
-    using point3 = vec3;
-    using color = vec3;
+    using Point3 = Vec3;
+    using Color = Vec3;
 
     // overload
-    std::ostream& operator<<(std::ostream& out, const vec3& a);
+    std::ostream& operator<<(std::ostream& out, const Vec3& a);
 
     // static function
-    vec3 sqrt(const vec3& a);
-    vec3 unit_vector(const vec3& a);
-    float dot(const vec3& a, const vec3& b);
-    vec3 cross(const vec3& a, const vec3& b);
+    Vec3 sqrt(const Vec3& a);
+    Vec3 unit_vector(const Vec3& a);
+    float dot(const Vec3& a, const Vec3& b);
+    Vec3 cross(const Vec3& a, const Vec3& b);
 
-    vec3 random_in_unit_cube(float a = 0.0f, float b = 1.0f);
-    vec3 random_in_unit_sphere();
-    vec3 random_in_unit_circle();
+    Vec3 random_in_unit_cube(float a = 0.0f, float b = 1.0f);
+    Vec3 random_in_unit_sphere();
+    Vec3 random_in_unit_circle();
 
 }
 

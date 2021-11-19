@@ -5,18 +5,18 @@
 
 namespace RayTracing {
 
-	hittable_list::hittable_list() {}
-	hittable_list::hittable_list(std::shared_ptr<hittable> object) { add(object); }
+	HittableList::HittableList() {}
+	HittableList::HittableList(std::shared_ptr<Hittable> object) { add(object); }
 
-	void hittable_list::clear() { this->objects.clear(); }
-	void hittable_list::add(std::shared_ptr<hittable> object) { objects.push_back(object); }
+	void HittableList::clear() { this->objects.clear(); }
+	void HittableList::add(std::shared_ptr<Hittable> object) { objects.push_back(object); }
 
-    bool hittable_list::hit(const ray& r, float t_min, float t_max, hit_record& rec) const {
-        hit_record temp_rec;
+    bool HittableList::hit(const Ray& r, float t_min, float t_max, HitRecord& rec) const {
+        HitRecord temp_rec;
         bool hit_anything = false;
         float closest_so_far = t_max;
 
-        for (const auto& object : this->objects) {
+        for (auto& object : this->objects) {
             // a ray may hit many objects
             // choose the closest one to hit
             if (object->hit(r, t_min, closest_so_far, temp_rec)) {
@@ -29,7 +29,26 @@ namespace RayTracing {
         return hit_anything;
     }
 
-    bool hittable_list::scatter(const ray& r, hit_record& rec, color& attenuation, ray& scattered) const {
-        return rec.material_ptr->scatter(r, rec.hit_point, rec.normal, rec.front_face, attenuation, scattered);
+    bool HittableList::bounding_box(float time0, float time1, AABB& aabb) const {
+        if (this->objects.empty())
+            return false;
+        
+        AABB temp_aabb;
+        bool first_aabb = true;
+
+        for (auto& object : this->objects) {
+            if (object->bounding_box(time0, time1, temp_aabb) == false) {
+                return false;
+            }
+            aabb = first_aabb ? temp_aabb : surrounding_box(aabb, temp_aabb);
+            first_aabb = false;
+        }
+
+        return true;
+    }
+
+
+    bool HittableList::scatter(const Ray& r, HitRecord& rec, Color& attenuation, Ray& scattered) const {
+        return rec.mat_ptr->scatter(r, rec.u, rec.v, rec.hit_point, rec.normal, rec.front_face, attenuation, scattered);
     }
 }

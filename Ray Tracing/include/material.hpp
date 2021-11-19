@@ -2,53 +2,85 @@
 #define _MATERIAL_HPP_
 
 #include "ray.hpp"
+#include "texture.hpp"
 #include "utility.hpp"
 #include "vec3.hpp"
 
 namespace RayTracing  {
 
-    class material {
+    class Material {
     public:
         virtual bool scatter(
-            const ray& r_in, const vec3& hit_point, const vec3& normal, bool front_face, color& attenuation, ray& scattered
+            const Ray& r_in, const float& u, const float& v, const Vec3& hit_point, const Vec3& normal, bool front_face, Color& attenuation, Ray& scattered
         ) const = 0;
+
+        virtual Color emit(float u, float v, const Point3& p) const;
     };
 
-    class lambertian : public material {
+    class Lambertian : public Material {
     public:
-        lambertian(const color& albedo);
+        Lambertian(const Color& albedo);
+        Lambertian(std::shared_ptr<Texture> albedo);
 
         virtual bool scatter(
-            const ray& r_in, const vec3& hit_point, const vec3& normal, bool front_face, color& attenuation, ray& scattered
+            const Ray& r_in, const float& u, const float& v, const Vec3& hit_point, const Vec3& normal, bool front_face, Color& attenuation, Ray& scattered
         ) const override;
 
     public:
-        color albedo;
+        std::shared_ptr<Texture> albedo;
     };
 
-    class metal : public material {
+    class Metal : public Material {
     public:
-        metal(const color& albedo, float fuzz);
+        Metal(const Color& albedo, float fuzz);
 
         virtual bool scatter(
-            const ray& r_in, const vec3& hit_point, const vec3& normal, bool front_face, color& attenuation, ray& scattered
+            const Ray& r_in, const float& u, const float& v, const Vec3& hit_point, const Vec3& normal, bool front_face, Color& attenuation, Ray& scattered
         ) const override;
 
     public:
-        color albedo;
+        Color albedo;
         float fuzz;
     };
 
-    class dielectric : public material {
+    class Dielectric : public Material {
     public:
-        dielectric(float index_of_refraction);
+        Dielectric(float index_of_refraction);
 
         virtual bool scatter(
-            const ray& r_in, const vec3& hit_point, const vec3& normal, bool front_face, color& attenuation, ray& scattered
+            const Ray& r_in, const float& u, const float& v, const Vec3& hit_point, const Vec3& normal, bool front_face, Color& attenuation, Ray& scattered
         ) const override;
 
     public:
         float refraction_rate;
+    };
+
+    class DiffuseLight : public Material {
+    public:
+        DiffuseLight(std::shared_ptr<Texture> e);
+        DiffuseLight(Color c);
+
+        virtual bool scatter(
+            const Ray& r_in, const float& u, const float& v, const Vec3& hit_point, const Vec3& normal, bool front_face, Color& attenuation, Ray& scattered
+        ) const override;
+
+        virtual Color emit(float u, float v, const Point3& p) const;
+
+    public:
+        std::shared_ptr<Texture> emission;
+    };
+
+    class Isotropic : public Material {
+    public:
+        Isotropic(Color c);
+        Isotropic(std::shared_ptr<Texture> a);
+
+        virtual bool scatter(
+            const Ray& r_in, const float& u, const float& v, const Vec3& hit_point, const Vec3& normal, bool front_face, Color& attenuation, Ray& scattered
+        ) const override;
+
+    public:
+        std::shared_ptr<Texture> albedo;
     };
 
 }

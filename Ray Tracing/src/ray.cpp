@@ -4,13 +4,11 @@
 
 namespace RayTracing {
 
-	ray::ray(const point3& origin, const vec3& direction) : ori(origin), dir(direction) {}
+	Ray::Ray(const Point3& origin, const Vec3& direction, float time) : origin(origin), direction(unit_vector(direction)), time(time) {}
 
-	point3 ray::origin() const { return ori; }
-	vec3 ray::direction() const { return dir; }
-	point3 ray::at(float t) const { return ori + dir * t; }
+	Point3 Ray::at(float t) const { return origin + direction * t; }
 
-    vec3 reflect(const vec3& r_in, const vec3& normal) {
+    Vec3 reflect(const Vec3& r_in, const Vec3& normal) {
         return r_in - 2.0f * dot(r_in, normal) * normal;
     }
 
@@ -21,7 +19,7 @@ namespace RayTracing {
         return (r0 + (1.0f- r0) * pow((1.0f - cosine), 5)) > gaussian_float(0.5f, 0.4f);
     }
 
-    vec3 refract(const vec3& r_in, const vec3& normal, float refraction_ratio) {
+    Vec3 refract(const Vec3& r_in, const Vec3& normal, float refraction_ratio) {
         float cos_theta = std::min(dot(r_in, normal), 1.0f);
         float sin_theta = std::sqrt(1.0f - cos_theta * cos_theta);
 
@@ -30,8 +28,8 @@ namespace RayTracing {
             return reflect(r_in, normal);
         }
         else {
-            vec3 r_out_perp = refraction_ratio * (r_in - cos_theta * normal);
-            vec3 r_out_parallel = -std::sqrt(std::fabs(1.0f - r_out_perp.length_squared())) * normal;
+            Vec3 r_out_perp = refraction_ratio * (r_in - cos_theta * normal);
+            Vec3 r_out_parallel = -std::sqrt(std::fabs(1.0f - r_out_perp.length_squared())) * normal;
             return r_out_perp + r_out_parallel;
         }
     }

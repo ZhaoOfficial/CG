@@ -6,24 +6,30 @@
 
 namespace RayTracing {
 
-    class ray {
+    class Ray {
     public:
-        ray(const point3& origin = vec3{ 0.0f,0.0f,0.0f }, const vec3& direction = vec3{ 0.0f,0.0f,0.0f });
+        Ray(
+            const Point3& origin = Vec3{ 0.0f,0.0f,0.0f },
+            const Vec3& direction = Vec3{ 0.0f,0.0f,0.0f },
+            float time = 0.0f
+        );
 
-        point3 origin() const;
-        vec3 direction() const;
-        point3 at(float t) const;
+        Point3 at(float t) const;
 
     public:
-        point3 ori;
-        vec3 dir;
+        Point3 origin;
+        Vec3 direction;
+        float time;
     };
 
     // ray behaviours
-    vec3 reflect(const vec3& r_in, const vec3& normal);
+    // normal specular reflect
+    Vec3 reflect(const Vec3& r_in, const Vec3& normal);
+    // consider polar of ray
     bool reflectance(float cosine, float ref_idx);
-    vec3 refract(const vec3& r_in, const vec3& normal, float refraction_ratio);
+    // dielectrics
+    Vec3 refract(const Vec3& r_in, const Vec3& normal, float refraction_ratio);
 
 }
 
-#endif
+#endif // !_RAY_HPP_

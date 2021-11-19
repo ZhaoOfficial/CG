@@ -6,19 +6,28 @@
 
 namespace RayTracing {
 
-    class sphere : public hittable {
+    class Sphere : public Hittable {
     public:
-        sphere(point3 center, float radius, std::shared_ptr<material> material_ptr);
+        Sphere(Point3 center, float radius, std::shared_ptr<Material> mat_ptr);
 
         virtual bool hit(
-            const ray& r, float t_min, float t_max, hit_record& rec
+            const Ray& r, float t_min, float t_max, HitRecord& rec
         ) const override;
-        virtual bool scatter(const ray& r, hit_record& rec, color& attenuation, ray& scattered) const override;
+
+        virtual bool bounding_box(
+            float t_min, float t_max, AABB& aabb
+        ) const override;
+
+        virtual bool scatter(
+            const Ray& r, HitRecord& rec, Color& attenuation, Ray& scattered
+        ) const override;
+
+        static void getSphereUV(float& u, float& v, const Point3& p);
 
     public:
-        point3 center;
+        Point3 center;
         float radius;
-        std::shared_ptr<material> material_ptr;
+        std::shared_ptr<Material> mat_ptr;
     };
 
 }

@@ -5,31 +5,36 @@
 
 namespace RayTracing {
 
-    camera::camera(point3 look_from, point3 look_at, vec3 up, float vertical_fov, float aperture, float focus_dist) {
-        float theta = degrees_to_radians(vertical_fov);
-        float h = tan(theta / 2);
+    Camera::Camera(
+        Point3 look_from, Point3 look_at, Vec3 up, float aspect_ratio,
+        float vertical_fov, float aperture, float focus_dist,
+        float start_time, float end_time
+    ) : start_time(start_time), end_time(end_time) {
 
-        float viewport_width = 4.8f * h;
-        float viewport_height = 2.7f * h;
-        float focal_length = 1.0f;
+        float viewport_height = 2.0f * tan(degrees_to_radians(vertical_fov) / 2);
 
+        // camera coordinate
         camera_front = unit_vector(look_from - look_at);
         camera_right = unit_vector(cross(up, camera_front));
         camera_up = cross(camera_front, camera_right);
 
+        // view port coordinate
         origin = look_from;
-        horizontal = focus_dist * viewport_width * camera_right;
+        horizontal = focus_dist * viewport_height * aspect_ratio * camera_right;
         vertical = focus_dist * viewport_height * camera_up;
-        lower_left_corner = origin - horizontal / 2.0f - vertical / 2.0f - focus_dist * camera_front;
+        lower_left_corner = origin - horizontal / 2.0f + vertical / 2.0f - focus_dist * camera_front;
+        
+        // lens
         lens_radius = aperture / 2.0f;
     }
 
-    ray camera::get_ray(float u, float v) const {
-        vec3 rd = lens_radius * random_in_unit_circle();
-        vec3 offset = camera_front * rd.x() + camera_right * rd.y();
-        return ray(
+    Ray Camera::get_ray(float u, float v) const {
+        Vec3 rd = lens_radius * random_in_unit_circle();
+        Vec3 offset = camera_front * rd.x() + camera_right * rd.y();
+        return Ray(
             origin + offset,
-            lower_left_corner + u * horizontal + v * vertical - origin - offset
+            lower_left_corner + u * horizontal - v * vertical - origin - offset,
+            uniform_float(start_time, end_time)
         );
     }
 }

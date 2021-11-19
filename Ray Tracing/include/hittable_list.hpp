@@ -8,19 +8,20 @@
 
 namespace RayTracing {
 
-    class hittable_list {
+    class HittableList {
     public:
-        hittable_list();
-        hittable_list(std::shared_ptr<hittable> object);
+        HittableList();
+        HittableList(std::shared_ptr<Hittable> object);
 
         void clear();
-        void add(std::shared_ptr<hittable> object);
+        void add(std::shared_ptr<Hittable> object);
 
-        bool hit(const ray& r, float t_min, float t_max, hit_record& rec) const;
-        bool scatter(const ray& r, hit_record& rec, color& attenuation, ray& scattered) const;
+        bool hit(const Ray& r, float t_min, float t_max, HitRecord& rec) const;
+        bool bounding_box(float time0, float time1, AABB& aabb) const;
+        bool scatter(const Ray& r, HitRecord& rec, Color& attenuation, Ray& scattered) const;
 
     public:
-        std::vector<std::shared_ptr<hittable>> objects;
+        std::vector<std::shared_ptr<Hittable>> objects;
     };
 
 }
