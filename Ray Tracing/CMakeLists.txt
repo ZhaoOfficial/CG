@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(Raytracing)
+project(RayTracing)
 
 # specify the C++ standard
 set(CMAKE_CXX_STANDARD 17)
@@ -14,10 +14,18 @@ if (OpenMP_FOUND)
 endif()
 
 # optimization
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2")
+include(CheckIPOSupported)
+check_ipo_supported(RESULT _IsIPOSupported)
+  if(_IsIPOSupported)
+  message(STATUS "Turn on INTERPROCEDURAL_OPTIMIZATION")
+  set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+endif()
+
+# release version
+SET(CMAKE_BUILD_TYPE "Release")
 
 include_directories(include)
 
 aux_source_directory(src SOURCE_DIR)
 
-add_executable(main ${SOURCE_DIR})
+add_executable(main ${SOURCE_DIR} "include/volume.hpp")
