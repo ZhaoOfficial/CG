@@ -1,9 +1,10 @@
 python-opengl
 tutorial
 rust
-Raytracing
 build
+image
 .vscode
+.vs
 
-
+*.png
 *.ppm

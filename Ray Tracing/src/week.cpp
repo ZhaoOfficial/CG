@@ -237,7 +237,7 @@ RayTracing::HittableList finalScene() {
     boundary = std::make_shared<RayTracing::Sphere>(RayTracing::Point3(0.0f, 0.0f, 0.0f), 5000.0f, std::make_shared<RayTracing::Dielectric>(1.5f));
     world.add(std::make_shared<RayTracing::ConstantMedium>(boundary, 1e-4f, RayTracing::Color(1.0f, 1.0f, 1.0f)));
 
-    auto emat = std::make_shared<RayTracing::Lambertian>(std::make_shared<RayTracing::ImageTexture>("D:/Mywork/Computer Graphics/Ray Tracing/image/earthmap.jpg"));
+    auto emat = std::make_shared<RayTracing::Lambertian>(std::make_shared<RayTracing::ImageTexture>("../image/earthmap.jpg"));
     world.add(std::make_shared<RayTracing::Sphere>(RayTracing::Point3(400.0f, 200.0f, 400.0f), 100.0f, emat));
     auto pertext = std::make_shared<RayTracing::NoiseTexture>(0.1f);
     world.add(std::make_shared<RayTracing::Sphere>(RayTracing::Point3(220.0f, 280.0f, 300.0f), 80.0f, std::make_shared<RayTracing::Lambertian>(pertext)));
@@ -378,6 +378,6 @@ int main() {
 
     auto end = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::seconds>(end - start).count();
-    printf("\nDone: %lld s\n", duration);
+    printf("\nDone: %ld s\n", duration);
     return 0;
 }
