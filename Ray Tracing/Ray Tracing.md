@@ -370,6 +370,39 @@ $$
 p=c\Delta L
 $$
 
+# Ray Tracing: The Rest of Your Life
+
+## A Simple Monte Carlo Program
+
+### Stratified Samples
+
+一种先分块然后再采样的方法（NeRF），精度会高很多，收敛也很快。
+
+## One Dimensional MC Integration
+
+要积 $[a,b]$ 上的函数，先选一个 $[a,b]$ 上的概率密度函数，对这个概率密度函数采样，然后把 $f(x)/p(x)$ 求和求平均即可。
+
+## MC Integration on the Sphere of Directions
+
+## Light Scattering
+
+### Albedo
+
+Probability of light scattering: $A$
+
+Probability of light being absorbed: $1−𝐴$
+
+Here $A$ stands for *albedo* (latin for *whiteness*).
+
+## Importance Sampling Materials
+
+Reduce noises in Cornell Box.
+
+
+
+
+
+
 
 
 

@@ -196,51 +196,51 @@ RayTracing::HittableList cornellBoxVolume() {
 }
 
 RayTracing::HittableList finalScene() {
-    RayTracing::HittableList boxes1;
-    auto ground = std::make_shared<RayTracing::Lambertian>(RayTracing::Color(0.48f, 0.83f, 0.53f));
+    // RayTracing::HittableList boxes1;
+    // auto ground = std::make_shared<RayTracing::Lambertian>(RayTracing::Color(0.48f, 0.83f, 0.53f));
 
-    const int boxes_per_side = 20;
-    for (int i = 0; i < boxes_per_side; i++) {
-        for (int j = 0; j < boxes_per_side; j++) {
-            float w = 100.0f;
-            float x0 = -1000.0f + i * w;
-            float z0 = -1000.0f + j * w;
-            float y0 = 0.0f;
-            float x1 = x0 + w;
-            float y1 = uniform_float(1.0f, 101.0f);
-            float z1 = z0 + w;
+    // const int boxes_per_side = 20;
+    // for (int i = 0; i < boxes_per_side; i++) {
+    //     for (int j = 0; j < boxes_per_side; j++) {
+    //         float w = 100.0f;
+    //         float x0 = -1000.0f + i * w;
+    //         float z0 = -1000.0f + j * w;
+    //         float y0 = 0.0f;
+    //         float x1 = x0 + w;
+    //         float y1 = uniform_float(1.0f, 101.0f);
+    //         float z1 = z0 + w;
 
-            boxes1.add(std::make_shared<RayTracing::Box>(RayTracing::Point3(x0, y0, z0), RayTracing::Point3(x1, y1, z1), ground));
-        }
-    }
+    //         boxes1.add(std::make_shared<RayTracing::Box>(RayTracing::Point3(x0, y0, z0), RayTracing::Point3(x1, y1, z1), ground));
+    //     }
+    // }
 
     RayTracing::HittableList world;
 
-    world.add(std::make_shared<RayTracing::BVH>(boxes1, 0.0f, 1.0f));
+    // world.add(std::make_shared<RayTracing::BVH>(boxes1, 0.0f, 1.0f));
 
     auto light = std::make_shared<RayTracing::DiffuseLight>(RayTracing::Color(7.0f, 7.0f, 7.0f));
     world.add(std::make_shared<RayTracing::XZRectangle>(123.0f, 423.0f, 147.0f, 412.0f, 554.0f, light));
 
-    auto center1 = RayTracing::Point3(400.0f, 400.0f, 200.0f);
-    auto center2 = center1 + RayTracing::Vec3(30.0f, 0.0f, 0.0f);
-    auto moving_sphere_material = std::make_shared<RayTracing::Lambertian>(RayTracing::Color(0.7f, 0.3f, 0.1f));
-    world.add(std::make_shared<RayTracing::MovingSphere>(center1, center2, 0.0f, 1.0f, 50.0f, moving_sphere_material));
+    // auto center1 = RayTracing::Point3(400.0f, 400.0f, 200.0f);
+    // auto center2 = center1 + RayTracing::Vec3(30.0f, 0.0f, 0.0f);
+    // auto moving_sphere_material = std::make_shared<RayTracing::Lambertian>(RayTracing::Color(0.7f, 0.3f, 0.1f));
+    // world.add(std::make_shared<RayTracing::MovingSphere>(center1, center2, 0.0f, 1.0f, 50.0f, moving_sphere_material));
 
-    world.add(std::make_shared<RayTracing::Sphere>(RayTracing::Point3(260.0f, 150.0f, 45.0f), 50.0f, std::make_shared<RayTracing::Dielectric>(1.5f)));
-    world.add(std::make_shared<RayTracing::Sphere>(
-        RayTracing::Point3(0.0f, 150.0f, 145.0f), 50.0f, std::make_shared<RayTracing::Metal>(RayTracing::Color(0.8f, 0.8f, 0.9f), 1.0f)
-    ));
+    // world.add(std::make_shared<RayTracing::Sphere>(RayTracing::Point3(260.0f, 150.0f, 45.0f), 50.0f, std::make_shared<RayTracing::Dielectric>(1.5f)));
+    // world.add(std::make_shared<RayTracing::Sphere>(
+    //     RayTracing::Point3(0.0f, 150.0f, 145.0f), 50.0f, std::make_shared<RayTracing::Metal>(RayTracing::Color(0.8f, 0.8f, 0.9f), 1.0f)
+    // ));
 
-    auto boundary = std::make_shared<RayTracing::Sphere>(RayTracing::Point3(360.0f, 150.0f, 145.0f), 70.0f, std::make_shared<RayTracing::Dielectric>(1.5f));
-    world.add(boundary);
-    world.add(std::make_shared<RayTracing::ConstantMedium>(boundary, 0.2f, RayTracing::Color(0.2f, 0.4f, 0.9f)));
-    boundary = std::make_shared<RayTracing::Sphere>(RayTracing::Point3(0.0f, 0.0f, 0.0f), 5000.0f, std::make_shared<RayTracing::Dielectric>(1.5f));
-    world.add(std::make_shared<RayTracing::ConstantMedium>(boundary, 1e-4f, RayTracing::Color(1.0f, 1.0f, 1.0f)));
+    // auto boundary = std::make_shared<RayTracing::Sphere>(RayTracing::Point3(360.0f, 150.0f, 145.0f), 70.0f, std::make_shared<RayTracing::Dielectric>(1.5f));
+    // world.add(boundary);
+    // world.add(std::make_shared<RayTracing::ConstantMedium>(boundary, 0.2f, RayTracing::Color(0.2f, 0.4f, 0.9f)));
+    // boundary = std::make_shared<RayTracing::Sphere>(RayTracing::Point3(0.0f, 0.0f, 0.0f), 5000.0f, std::make_shared<RayTracing::Dielectric>(1.5f));
+    // world.add(std::make_shared<RayTracing::ConstantMedium>(boundary, 1e-4f, RayTracing::Color(1.0f, 1.0f, 1.0f)));
 
-    auto emat = std::make_shared<RayTracing::Lambertian>(std::make_shared<RayTracing::ImageTexture>("../image/earthmap.jpg"));
-    world.add(std::make_shared<RayTracing::Sphere>(RayTracing::Point3(400.0f, 200.0f, 400.0f), 100.0f, emat));
-    auto pertext = std::make_shared<RayTracing::NoiseTexture>(0.1f);
-    world.add(std::make_shared<RayTracing::Sphere>(RayTracing::Point3(220.0f, 280.0f, 300.0f), 80.0f, std::make_shared<RayTracing::Lambertian>(pertext)));
+    // auto emat = std::make_shared<RayTracing::Lambertian>(std::make_shared<RayTracing::ImageTexture>("../image/earthmap.jpg"));
+    // world.add(std::make_shared<RayTracing::Sphere>(RayTracing::Point3(400.0f, 200.0f, 400.0f), 100.0f, emat));
+    // auto pertext = std::make_shared<RayTracing::NoiseTexture>(0.1f);
+    // world.add(std::make_shared<RayTracing::Sphere>(RayTracing::Point3(220.0f, 280.0f, 300.0f), 80.0f, std::make_shared<RayTracing::Lambertian>(pertext)));
 
     RayTracing::HittableList boxes2;
     auto white = std::make_shared<RayTracing::Lambertian>(RayTracing::Color(0.73f, 0.73f, 0.73f));
@@ -262,9 +262,9 @@ RayTracing::HittableList finalScene() {
 int main() {
 
     //! image setting
-    int image_width = 600;
-    int image_height = 600;
-    int samples_per_pixel = 100;
+    int image_width = 2000;
+    int image_height = 2000;
+    int samples_per_pixel = 10000;
     int max_depth = 50;
 
     //! world
@@ -326,8 +326,8 @@ int main() {
             image_width = static_cast<int>(aspect_ratio * static_cast<float>(image_height));
             background = RayTracing::Color(0.0f, 0.0f, 0.0f);
             lookfrom = RayTracing::Point3(478.0f, 278.0f, -600.0f);
-            lookat = RayTracing::Point3(278.0f, 278.0f, 0.0f);
-            vertical_fov = 40.0f;
+            lookat = RayTracing::Point3(208.0f, 328.0f, 0.0f);
+            vertical_fov = 16.0f;
             break;
         default:
         case 9:

@@ -17,20 +17,26 @@ inline float degrees_to_radians(float degrees) {
 }
 
 inline float gaussian_float(float mu = 0.0f, float sigma = 0.5f) {
-    std::normal_distribution<float> gaussian(mu, sigma);
+    static std::random_device rd;
+    // static std::default_random_engine rng(rd());
     static std::default_random_engine rng;
+    std::normal_distribution<float> gaussian(mu, sigma);
     return gaussian(rng);
 }
 
 inline float uniform_float(float a = 0.0f, float b = 1.0f) {
-    std::uniform_real_distribution<float> uniform(a, b);
+    static std::random_device rd;
+    // static std::default_random_engine rng(rd());
     static std::default_random_engine rng;
+    std::uniform_real_distribution<float> uniform(a, b);
     return uniform(rng);
 }
 
 inline int uniform_int(int a = 0, int b = 1) {
-    std::uniform_int_distribution<int> uniform(a, b);
+    static std::random_device rd;
+    // static std::default_random_engine rng(rd());
     static std::default_random_engine rng;
+    std::uniform_int_distribution<int> uniform(a, b);
     return uniform(rng);
 }
 
