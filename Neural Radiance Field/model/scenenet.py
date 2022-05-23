@@ -4,9 +4,9 @@ import torch
 import torch.nn as nn
 
 from .pos_enc import PositionalEncoder
-from utils import logging
+from utils import logger
 
-logger = logging.Logger("model/scenenet")
+logger = logger.Logger("model/scenenet")
 
 class SceneNet(nn.Module):
     """NeRF, MLP represented scene."""

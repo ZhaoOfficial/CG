@@ -12,11 +12,11 @@ import torch.nn as nn
 from torch.utils.tensorboard import SummaryWriter
 from torch.utils.data import DataLoader
 
-from utils import logging
+from utils import logger
 from model import makeModel, makeLossFunction, makeOptimizer, makeScheduer
 from dataset import makeTrainLoader
 
-logger = logging.Logger("main/training")
+logger = logger.Logger("main/training")
 
 def parseArgument() -> argparse.Namespace:
     description = "This file is the entrance of training nerf. Try to get help by using -h."
@@ -29,7 +29,7 @@ def parseArgument() -> argparse.Namespace:
     return args
 
 def makeConfig(args: argparse.Namespace) -> ConfigParser:
-    assert os.path.exists(args.config), "Can not find configuration file with path {}".format(config_path)
+    assert os.path.exists(args.config), "Can not find configuration file with path {}".format(args.config)
     config = ConfigParser()
     config.read(args.config)
     return config
@@ -79,6 +79,7 @@ if __name__ == "__main__":
     swriter = SummaryWriter(log_dir=output_dir, max_queue=1)
 
     #* create model, optimizer, loss function, scheduler and data loader
+    # TODO: from here
     model        = makeModel(config)
     loss_fn      = makeLossFunction(config)
     optimizer    = makeOptimizer(config, model)

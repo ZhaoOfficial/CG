@@ -8,9 +8,9 @@ import tqdm
 
 from .frame_dataset import SyntheticImageDataset
 from .ray_sampling import sampleRaySynthetic
-from utils import logging
+from utils import logger
 
-logger = logging.Logger("dataset/ray_dataset")
+logger = logger.Logger("dataset/ray_dataset")
 
 class SyntheticDataset(data.Dataset):
     def __init__(self, config: ConfigParser) -> None:
@@ -77,7 +77,7 @@ class SyntheticDataset(data.Dataset):
     def __len__(self) -> int:
         return self.rays.size(1)
 
-    def __getitem__(self, index: int) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    def __getitem__(self, index: int) -> Tuple[torch.Tensor, ...]:
         return (
             self.rays[:, index],
             self.colors[:, index],

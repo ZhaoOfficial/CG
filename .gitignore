@@ -3,6 +3,8 @@ tutorial
 rust
 build
 image
+pbrt-v3
+Ray Tracing Embree
 .vscode
 .vs
 

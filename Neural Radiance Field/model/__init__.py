@@ -5,12 +5,14 @@ import math
 import torch
 import torch.nn as nn
 
-from utils import logging
+from renderer import Renderer
+from utils import logger
 
-logger = logging.Logger("model/__init__")
+logger = logger.Logger("model/__init__")
 
 def makeModel(config: ConfigParser) -> nn.Module:
-    pass
+    model = Renderer(config)
+    return model
 
 def makeLossFunction(config: ConfigParser) -> Union[nn.SmoothL1Loss, nn.MSELoss]:
     loss_fn_name = config.get("model", "LOSS_FN")

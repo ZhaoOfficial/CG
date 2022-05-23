@@ -1,8 +1,8 @@
 import torch
 
-from utils import logging
+from utils import logger
 
-logger = logging.Logger("model/pos_enc")
+logger = logger.Logger("model/pos_enc")
 
 class PositionalEncoder(object):
     def __init__(

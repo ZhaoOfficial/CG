@@ -2,10 +2,10 @@ from configparser import ConfigParser
 
 from torch.utils import data
 
-from utils import logging
+from utils import logger
 from .ray_dataset import SyntheticDataset
 
-logger = logging.Logger("dataset/build")
+logger = logger.Logger("dataset/build")
 
 def makeTrainLoader(config: ConfigParser) -> data.DataLoader:
 
