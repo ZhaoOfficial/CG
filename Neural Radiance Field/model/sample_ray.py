@@ -69,7 +69,7 @@ class RaySamplerNearFar(nn.Module):
         rayd = rays[:, 3:]
 
         # interval.size() = (N, S + 1)
-        interval = torch.linspace(0.0, 1.0, S + 1, device=rays.device).expand(N, S)
+        interval = torch.linspace(0.0, 1.0, S + 1, device=rays.device).expand(N, S + 1)
         # depth.size() = (N, S + 1)
         # endpoints of each bin
         diff = (near_far[:, 1:2] - near_far[:, 0:1]).expand(-1, S + 1)
