@@ -3,7 +3,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-// #include <cuda_runtime.h>
 
 static void handleError(cudaError_t err, char const *file, int line) {
     if (err != cudaSuccess) {
