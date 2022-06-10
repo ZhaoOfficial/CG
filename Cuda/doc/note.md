@@ -37,5 +37,7 @@ Maximum sizes of each dimension of a block: 1024 x 1024 x 64
 Maximum sizes of each dimension of a grid: 2147483647 x 65535 x 65535
 ```
 
+## Chapter 5 Thread Cooperation
+
 
 
