@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "arguments_parser.h"
+#include "arg_parser/arg_parser.h"
 #include "log.h"
 
 namespace pbrt {
