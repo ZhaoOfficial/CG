@@ -4,12 +4,12 @@
 #include <iostream>
 #include <type_traits>
 
-#include "util/arithmetic.h"
+#include "math/arithmetic.h"
 #include "../common.h"
 
 PBRT_NAMESPACE_START
 
-// Yes, a template template class
+// Yes, a template template parameter
 template <template <typename> typename Container, typename T>
 struct Tuple3 {
     // Interface of all two element containers.
@@ -49,6 +49,7 @@ struct Tuple3 {
     }
     template <NumericType Number>
     Container<decltype(T{} / Number{})>& operator/=(Number num) {
+        assert(num != Number{});
         auto inv_num = T(1) / num;
         return this->operator*=(inv_num);
     }
@@ -60,7 +61,7 @@ struct Tuple3 {
         return temp;
     }
     template <typename U>
-    friend Container<decltype(T{} + U{})> operator-(Container<T> const& lhs, Container<U> const& rhs) {
+    friend Container<decltype(T{} - U{})> operator-(Container<T> const& lhs, Container<U> const& rhs) {
         Container<T> temp = lhs;
         temp -= rhs;
         return temp;

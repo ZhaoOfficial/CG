@@ -9,6 +9,7 @@
 PBRT_NAMESPACE_START
 
 using Float = float;
+// using Float = double;
 
 //! Constants
 constexpr Float MinFloat  = std::numeric_limits<Float>::lowest();
