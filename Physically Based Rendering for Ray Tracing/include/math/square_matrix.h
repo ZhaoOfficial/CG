@@ -27,6 +27,7 @@ public:
     //! Constructor and destructor
 
     //! Operator overloading
+    //* Arithmetic operators
     SquareMatrix& operator+=(SquareMatrix const& rhs) {
         std::transform(rhs.begin(), rhs.end(), this->begin(), std::plus<Float>{});
         return *this;
@@ -36,7 +37,7 @@ public:
         return *this;
     }
     SquareMatrix& operator*=(Float num) {
-        for (auto&& d : *this) {
+        for (auto&& d : this->data_1d) {
             d *= num;
         }
         return *this;
@@ -68,12 +69,19 @@ public:
         temp /= rhs;
         return temp;
     }
+    //* Comparation operators
     friend bool operator==(SquareMatrix const& lhs, SquareMatrix const& rhs) {
         return std::equal(lhs.begin(), lhs.end(), rhs.begin());
     }
     friend bool operator!=(SquareMatrix const& lhs, SquareMatrix const& rhs) {
         return !(lhs == rhs);
     }
+    friend bool operator<(SquareMatrix const& lhs, SquareMatrix const& rhs) {
+        return std::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
+    }
+    //* Indexing operators
+    Float& operator[](std::size_t i, std::size_t j) { return this->data[i][j]; }
+    Float const& operator[](std::size_t i, std::size_t j) const { return this->data[i][j]; }
     //! Operator overloading
 
     //! Auxiliary functions
@@ -111,7 +119,16 @@ public:
         }
         return true;
     }
-    
+
+    SquareMatrix transpose() const {
+        SquareMatrix T;
+        for (std::size_t i{}; i < N; ++i) {
+            for (std::size_t j{}; j < N; ++j) {
+                T[i, j] = this->operator[](j, i);
+            }
+        }
+    }
+
     Float determinant() const {
         return 0;
     }
@@ -132,81 +149,7 @@ private:
     };
 };
 
-//! Specialization of N = 1, 2, 3, 4
-//* N = 1
-template <>
-Float SquareMatrix<1>::determinant() const {
-    return this->data[0][0];
-}
-template <>
-SquareMatrix<1> SquareMatrix<1>::inverse() const {
-    if (this->data[0][0] == Float(0)) {
-        return SquareMatrix<1>{};
-    }
-    Float mat[1] = { Float(1) / this->data[0][0] };
-    return SquareMatrix<1>{mat};
-}
-
-//* N = 2
-template <>
-Float SquareMatrix<2>::determinant() const {
-    Float a1 = this->data[0][0] * this->data[1][1];
-    Float b1 = this->data[0][1] * this->data[1][0];
-
-    return a1 - b1;
-}
-template <>
-SquareMatrix<2> SquareMatrix<2>::inverse() const {
-    Float det = this->determinant();
-    if (det == 0) {
-        return SquareMatrix<2>{};
-    }
-    Float inv_det = Float(1) / det;
-
-    Float mat[4] {
-         this->data[1][1], -this->data[0][1],
-        -this->data[1][0],  this->data[0][0]
-    };
-    for (auto&& i : mat) {
-        i *= inv_det;
-    }
-    
-    return SquareMatrix<2>{mat};
-}
-
-//* N = 3
-template <>
-Float SquareMatrix<3>::determinant() const {
-    Float a1 = this->data[0][0] * this->data[1][1] * this->data[2][2];
-    Float a2 = this->data[0][1] * this->data[1][2] * this->data[2][0];
-    Float a3 = this->data[0][2] * this->data[1][0] * this->data[2][1];
-
-    Float b1 = this->data[0][0] * this->data[1][2] * this->data[2][1];
-    Float b2 = this->data[0][1] * this->data[1][0] * this->data[2][2];
-    Float b3 = this->data[0][2] * this->data[1][1] * this->data[2][0];
-
-    return a1 + a2 + a3 - b1 - b2 - b3;
-}
-template <>
-SquareMatrix<3> SquareMatrix<3>::inverse() const {
-    Float det = this->determinant();
-    if (det == 0) {
-        return SquareMatrix<3>{};
-    }
-    Float inv_det = Float(1) / det;
-
-    Float mat[9] {
-         this->data[1][1], -this->data[0][1],
-        -this->data[1][0],  this->data[0][0]
-    };
-    for (auto&& i : mat) {
-        i *= inv_det;
-    }
-    
-    return SquareMatrix<3>{mat} * inv_det;
-}
-
-//! Specialization of N = 1, 2, 3, 4
+//! Specializations of N = 1, 2, 3, 4 are in corresponding `.cpp` file
 
 PBRT_NAMESPACE_END
 

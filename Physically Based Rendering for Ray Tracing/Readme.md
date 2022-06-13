@@ -19,11 +19,11 @@ The core codes are in `src/`, `include/`, and `main`. The notes and documentatio
 ### Chapter 2 Geometry and Transformations
 
 - [x] 2.1 Coordinate Systems
-- [ ] 2.2 Vectors
+- [x] 2.2 Vectors
 - [ ] 2.3 Points
 - [ ] 2.4 Normals
 - [ ] 2.5 Rays
-- [ ] 2.6 Bounding Boxes
+- [x] 2.6 Bounding Boxes
 - [ ] 2.7 Transformations
 - [ ] 2.8 Applying Transformations
 - [ ] 2.9 Animating Transformations

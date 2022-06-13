@@ -1,9 +1,11 @@
 #include <iostream>
 
+#include "common.h"
 #include "arg_parser/arg_parser.h"
-#include "log.h"
+#include "log/log.h"
 
-namespace pbrt {
+PBRT_NAMESPACE_START
+
     void usage(const char *msg) {
         if (msg != nullptr) {
             fprintf(stderr, "message: %s\n\n", msg);
@@ -15,4 +17,5 @@ Rendering options:
     --nthreads <>
 )");
     }
-}
+
+PBRT_NAMESPACE_END

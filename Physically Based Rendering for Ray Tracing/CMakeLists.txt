@@ -27,3 +27,6 @@ endif()
 
 # Folder
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
+# Make src/ as a lib
+add_subdirectory(src)

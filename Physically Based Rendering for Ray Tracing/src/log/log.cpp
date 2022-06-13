@@ -1,7 +1,7 @@
-#include <iostream>
+#include "common.h"
+#include "log/log.h"
 
-#include "log.h"
+PBRT_NAMESPACE_START
 
-namespace pbrt {
+PBRT_NAMESPACE_END
 
-}

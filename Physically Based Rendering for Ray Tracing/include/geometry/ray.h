@@ -15,13 +15,10 @@ struct Ray {
         Float t_max = Infinity,
         Float time = Float(0.0),
         Medium const* medium = nullptr
-    ) noexcept : o{o}, d{d}, t_max{t_max}, time{time}, medium{medium} {}
-    Point3f operator()(Float t) const { return o + d * t; }
+    ) noexcept;
+    Point3f operator()(Float t) const;
 
-    friend std::ostream& operator<<(std::ostream& out, Ray const& r) {
-        out << "[o = " << r.o << ", d = " << r.d << ", t_max = " << r.t_max << ", time = " << r.time << "]";
-        return out;
-    }
+    friend std::ostream& operator<<(std::ostream& out, Ray const& r);
 
     // Member variables
     Point3f  o;

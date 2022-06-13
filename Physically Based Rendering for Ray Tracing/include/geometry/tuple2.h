@@ -39,7 +39,7 @@ struct Tuple2 {
         return static_cast<Container<T> &>(*this);
     }
     template <NumericType Number>
-    Container<decltype(T{} / Number{})>& operator*=(Number num) {
+    Container<decltype(T{} * Number{})>& operator*=(Number num) {
         this->x *= num;
         this->y *= num;
         return static_cast<Container<decltype(T{} * Number{})> &>(*this);

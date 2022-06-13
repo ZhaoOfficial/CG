@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.16)
 
-# find all the .cu file
+# Find all the .cu file
 file(GLOB file_name_list RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "*.cu")
-# get the name of the folder that the CMakeLists.txt currently locates
+# Get the name of the folder where the CMakeLists.txt currently locates
 get_filename_component(folder_name ${CMAKE_CURRENT_SOURCE_DIR} NAME_WE)
 
 foreach(file_name IN LISTS file_name_list)

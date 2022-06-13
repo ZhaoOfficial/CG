@@ -39,6 +39,7 @@ public:
     //! Auxiliary functions
     bool empty() const { return (this->minimum.x >= this->maximum.x) or (this->minimum.y >= this->maximum.y); }
     Vector2<T> diagonal() const { return this->maximum - this->minimum; }
+    // The measure (area, volume) of the box.
     T measure() const { Vector2<T> diag = this->diagonal(); return (diag.x * diag.y); }
 
     Vector2<T> normCoord(Point2<T> const& point) const {
