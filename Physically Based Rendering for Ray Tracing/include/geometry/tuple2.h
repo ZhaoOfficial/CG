@@ -1,7 +1,6 @@
 #ifndef _PBRT_TUPLE2_H_
 #define _PBRT_TUPLE2_H_
 
-#include <iostream>
 #include <type_traits>
 
 #include "math/arithmetic.h"
@@ -90,10 +89,10 @@ struct Tuple2 {
         return (lhs.x != rhs.x) or (lhs.y != lhs.y);
     }
     //* Indexing operators
-    const_reference operator[](std::size_t idx) const {
+    constexpr const_reference operator[](std::size_t idx) const {
         return this->data[idx];
     }
-    reference operator[](std::size_t idx) {
+    constexpr reference operator[](std::size_t idx) {
         return this->data[idx];
     }
     //* Output operator

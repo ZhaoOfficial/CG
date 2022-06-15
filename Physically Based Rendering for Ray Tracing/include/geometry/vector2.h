@@ -1,8 +1,6 @@
 #ifndef _PBRT_VECTOR2_H_
 #define _PBRT_VECTOR2_H_
 
-#include <iostream>
-
 #include "tuple2.h"
 #include "../common.h"
 

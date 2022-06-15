@@ -8,3 +8,6 @@ target_link_libraries(test_ray PUBLIC geometry)
 
 add_executable(test_aabb geometry/test_aabb.cpp)
 target_include_directories(test_aabb PUBLIC "${CMAKE_SOURCE_DIR}/include")
+
+add_executable(test_square_matrix math/test_square_matrix.cpp)
+target_include_directories(test_square_matrix PUBLIC "${CMAKE_SOURCE_DIR}/include")

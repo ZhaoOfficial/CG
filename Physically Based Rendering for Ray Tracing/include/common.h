@@ -1,6 +1,7 @@
 #ifndef _PBRT_COMMON_H_
 #define _PBRT_COMMON_H_
 
+#include <iostream>
 #include <limits>
 
 #define PBRT_NAMESPACE_START namespace pbrt {
@@ -16,6 +17,7 @@ constexpr Float MinFloat  = std::numeric_limits<Float>::lowest();
 constexpr Float MaxFloat  = std::numeric_limits<Float>::max();
 constexpr Float Infinity  = std::numeric_limits<Float>::infinity();
 constexpr Float Epsilon   = std::numeric_limits<Float>::epsilon();
+constexpr Float SoftEps   = Float(1e-5);
 constexpr Float PI        = 3.14159265358979323846;
 constexpr Float INV_PI    = 0.31830988618379067154;
 constexpr Float INV_2PI   = 0.15915494309189533577;

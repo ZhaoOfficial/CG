@@ -1,8 +1,6 @@
 #ifndef _PBRT_VECTOR3_H_
 #define _PBRT_VECTOR3_H_
 
-#include <iostream>
-
 #include "tuple3.h"
 #include "../common.h"
 

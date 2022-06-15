@@ -1,8 +1,6 @@
 #ifndef _PBRT_AABB2_H_
 #define _PBRT_AABB2_H_
 
-#include <limits>
-
 #include "vector2.h"
 #include "../common.h"
 
@@ -28,8 +26,8 @@ public:
         return (lhs.minimum != rhs.minimum) or (lhs.maximum != rhs.maximum);
     }
     //* Indexing operators
-    Point2<T> const& operator[](std::size_t idx) const { return this->data[idx]; }
-    Point2<T>& operator[](std::size_t idx) { return this->data[idx]; }
+    constexpr Point2<T> const& operator[](std::size_t idx) const { return this->data[idx]; }
+    constexpr Point2<T>& operator[](std::size_t idx) { return this->data[idx]; }
     friend std::ostream& operator<<(std::ostream& out, Bbox2<T> const& rhs) {
         out << "[" << rhs.minimum << " ~ " << rhs.maximum << "]";
         return out;

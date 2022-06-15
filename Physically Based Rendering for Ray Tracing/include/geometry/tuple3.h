@@ -1,7 +1,6 @@
 #ifndef _PBRT_TUPLE3_H_
 #define _PBRT_TUPLE3_H_
 
-#include <iostream>
 #include <type_traits>
 
 #include "math/arithmetic.h"
@@ -12,7 +11,7 @@ PBRT_NAMESPACE_START
 // Yes, a template template parameter
 template <template <typename> typename Container, typename T>
 struct Tuple3 {
-    // Interface of all two element containers.
+    // Interface of all three element containers.
     using value_type      = std::decay_t<T>;
     using reference       = value_type&;
     using pointer         = value_type*;
@@ -93,10 +92,10 @@ struct Tuple3 {
         return (lhs.x != rhs.x) or (lhs.y != lhs.y)or (lhs.z != rhs.z);
     }
     //* Indexing operators
-    const_reference operator[](std::size_t idx) const {
+    constexpr const_reference operator[](std::size_t idx) const {
         return this->data[idx];
     }
-    reference operator[](std::size_t idx) {
+    constexpr reference operator[](std::size_t idx) {
         return this->data[idx];
     }
     //* Output operator

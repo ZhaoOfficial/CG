@@ -1,8 +1,6 @@
 #ifndef _PBRT_RAY_H_
 #define _PBRT_RAY_H_
 
-#include <iostream>
-
 #include "vector3.h"
 #include "../common.h"
 

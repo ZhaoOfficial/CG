@@ -2,7 +2,10 @@
 #define _PBRT_SQUARE_MATRIX_H_
 
 #include <algorithm>
+#include <functional>
 
+#include "matrix.h"
+#include "geometry/vector2.h"
 #include "../common.h"
 
 PBRT_NAMESPACE_START
@@ -29,17 +32,15 @@ public:
     //! Operator overloading
     //* Arithmetic operators
     SquareMatrix& operator+=(SquareMatrix const& rhs) {
-        std::transform(rhs.begin(), rhs.end(), this->begin(), std::plus<Float>{});
+        std::transform(this->begin(), this->end(), rhs.begin(), this->begin(), std::plus<Float>{});
         return *this;
     }
     SquareMatrix& operator-=(SquareMatrix const& rhs) {
-        std::transform(rhs.begin(), rhs.end(), this->begin(), std::minus<Float>{});
+        std::transform(this->begin(), this->end(), rhs.begin(), this->begin(), std::minus<Float>{});
         return *this;
     }
     SquareMatrix& operator*=(Float num) {
-        for (auto&& d : this->data_1d) {
-            d *= num;
-        }
+        std::transform(this->begin(), this->end(), this->begin(), std::bind(std::multiplies{}, std::placeholders::_1, num));
         return *this;
     }
     SquareMatrix& operator/=(Float num) {
@@ -80,25 +81,19 @@ public:
         return std::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
     }
     //* Indexing operators
-    Float& operator[](std::size_t i, std::size_t j) { return this->data[i][j]; }
-    Float const& operator[](std::size_t i, std::size_t j) const { return this->data[i][j]; }
+    constexpr Float& operator[](Vector2<std::size_t> const& idx) { return this->data[idx.x][idx.y]; }
+    constexpr Float const& operator[](Vector2<std::size_t> const& idx) const { return this->data[idx.x][idx.y]; }
+    friend std::ostream& operator<<(std::ostream& out, SquareMatrix const& rhs) {
+        if constexpr (N == 1) {
+            out << "[[" << rhs.data[0][0] << "]]";
+        }
+        return out;
+    }
     //! Operator overloading
 
     //! Auxiliary functions
     static SquareMatrix Zeros() {
         return SquareMatrix{};
-    }
-    static SquareMatrix Ones() {
-        SquareMatrix temp;
-        std::fill(temp.begin(), temp.end(), Float(1));
-        return temp;
-    }
-    static SquareMatrix Identity() {
-        SquareMatrix temp;
-        for (std::size_t i{}; i < N * N; i += (N + 1)) {
-            temp.data_1d[i] = Float(1);
-        }
-        return temp;
     }
 
     bool isIdentity() const {
@@ -127,6 +122,7 @@ public:
                 T[i, j] = this->operator[](j, i);
             }
         }
+        return T;
     }
 
     Float determinant() const {
@@ -139,7 +135,8 @@ public:
     //! Auxiliary functions
 
 private:
-
+    Float* begin() { return std::begin(this->data_1d); }
+    Float* end() { return std::end(this->data_1d); }
     Float const* begin() const { return std::begin(this->data_1d); }
     Float const* end() const { return std::end(this->data_1d); }
 
@@ -149,7 +146,131 @@ private:
     };
 };
 
-//! Specializations of N = 1, 2, 3, 4 are in corresponding `.cpp` file
+//! Specializations of N = 1, 2, 3, 4
+
+//* N = 1
+template <>
+Float SquareMatrix<1>::determinant() const {
+    return this->data[0][0];
+}
+template <>
+SquareMatrix<1> SquareMatrix<1>::inverse() const {
+    if (this->data[0][0] == Float(0)) {
+        return SquareMatrix<1>{};
+    }
+    Float mat[1] = { Float(1) / this->data[0][0] };
+    return SquareMatrix<1>{mat};
+}
+
+//* N = 2
+template <>
+Float SquareMatrix<2>::determinant() const {
+    return crossProductDifference(
+        this->data[0][0], this->data[0][1],
+        this->data[1][0], this->data[1][1]
+    );
+}
+template <>
+SquareMatrix<2> SquareMatrix<2>::inverse() const {
+    Float det = this->determinant();
+    if (det == 0) {
+        return SquareMatrix<2>{};
+    }
+    Float inv_det = Float(1) / det;
+
+    Float mat[4] {
+         this->data[1][1], -this->data[0][1],
+        -this->data[1][0],  this->data[0][0]
+    };
+    mat[0] *= inv_det;
+    mat[1] *= inv_det;
+    mat[2] *= inv_det;
+    mat[3] *= inv_det;
+    
+    return SquareMatrix<2>{mat};
+}
+
+//* N = 3
+template <>
+Float SquareMatrix<3>::determinant() const {
+    Float a1 = this->data[0][0] * this->data[1][1] * this->data[2][2];
+    Float a2 = this->data[0][1] * this->data[1][2] * this->data[2][0];
+    Float a3 = this->data[0][2] * this->data[1][0] * this->data[2][1];
+
+    Float b1 = this->data[0][0] * this->data[1][2] * this->data[2][1];
+    Float b2 = this->data[0][1] * this->data[1][0] * this->data[2][2];
+    Float b3 = this->data[0][2] * this->data[1][1] * this->data[2][0];
+
+    return a1 + a2 + a3 - b1 - b2 - b3;
+}
+template <>
+SquareMatrix<3> SquareMatrix<3>::inverse() const {
+    Float det = this->determinant();
+    if (det == 0) {
+        return SquareMatrix<3>{};
+    }
+    Float inv_det = Float(1) / det;
+
+    Float mat[9] {
+        crossProductDifference(this->data[1][1], this->data[1][2], this->data[2][1], this->data[2][2]),
+        crossProductDifference(this->data[2][0], this->data[2][2], this->data[1][0], this->data[1][2]),
+        crossProductDifference(this->data[1][0], this->data[1][1], this->data[2][0], this->data[2][1]),
+        crossProductDifference(this->data[2][1], this->data[2][2], this->data[0][1], this->data[0][2]),
+        crossProductDifference(this->data[0][0], this->data[0][2], this->data[2][0], this->data[2][2]),
+        crossProductDifference(this->data[2][0], this->data[2][1], this->data[0][0], this->data[0][1]),
+        crossProductDifference(this->data[0][1], this->data[0][2], this->data[1][1], this->data[1][2]),
+        crossProductDifference(this->data[1][0], this->data[1][2], this->data[0][0], this->data[0][2]),
+        crossProductDifference(this->data[0][0], this->data[0][1], this->data[1][0], this->data[1][1])
+    };
+    for (auto&& i : mat) { i *= inv_det; }
+
+    return SquareMatrix<3>{mat};
+}
+
+//* N = 4
+template <>
+Float SquareMatrix<4>::determinant() const {
+    // By a little trick...
+    Float M0011 = crossProductDifference(this->data[0][0], this->data[1][1], this->data[0][1], this->data[1][0]);
+    Float M0012 = crossProductDifference(this->data[0][0], this->data[1][2], this->data[0][2], this->data[1][0]);
+    Float M0013 = crossProductDifference(this->data[0][0], this->data[1][3], this->data[0][3], this->data[1][0]);
+
+    Float M0112 = crossProductDifference(this->data[0][1], this->data[1][2], this->data[0][2], this->data[1][1]);
+    Float M0113 = crossProductDifference(this->data[0][1], this->data[1][3], this->data[0][3], this->data[1][1]);
+    Float M0213 = crossProductDifference(this->data[0][2], this->data[1][3], this->data[0][3], this->data[1][2]);
+
+    Float M2031 = crossProductDifference(this->data[2][0], this->data[3][1], this->data[2][1], this->data[3][0]);
+    Float M2032 = crossProductDifference(this->data[2][0], this->data[3][2], this->data[2][2], this->data[3][0]);
+    Float M2033 = crossProductDifference(this->data[2][0], this->data[3][3], this->data[2][3], this->data[3][0]);
+
+    Float M2132 = crossProductDifference(this->data[2][1], this->data[3][2], this->data[2][2], this->data[3][1]);
+    Float M2133 = crossProductDifference(this->data[2][1], this->data[3][3], this->data[2][3], this->data[3][1]);
+    Float M2233 = crossProductDifference(this->data[2][1], this->data[3][3], this->data[2][3], this->data[3][2]);
+
+    Float result = (
+        crossProductDifference(M0011, M0012, M2133, M2233) + 
+        crossProductDifference(M0112, M0113, M2032, M2033) + 
+        crossProductSum(M0013, M0213, M2031, M2132)
+    );
+
+    return 0;
+}
+template <>
+SquareMatrix<4> SquareMatrix<4>::inverse() const {
+    Float det = this->determinant();
+    if (det == 0) {
+        return SquareMatrix<4>{};
+    }
+    Float inv_det = Float(1) / det;
+
+    Float mat[16] {
+    };
+    for (auto&& i : mat) { i *= inv_det; }
+
+    return SquareMatrix<4>{};
+}
+
+//! Specializations of N = 1, 2, 3, 4
 
 PBRT_NAMESPACE_END
 
