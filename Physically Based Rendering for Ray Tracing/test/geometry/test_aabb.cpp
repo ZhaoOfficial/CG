@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include "common.h"
+#include "debug.h"
 #include "geometry/aabb2.h"
 #include "geometry/aabb3.h"
 
@@ -23,9 +24,9 @@ int main(int argc, char **argv) {
             Bbox2f box1;
             Bbox2f box2{ mini };
             Bbox2f box3{ mini, maxi };
-            std::cout << "box1 = " << box1 << std::endl;
-            std::cout << "box2 = " << box2 << std::endl;
-            std::cout << "box3 = " << box3 << std::endl;
+            debugOutput(box1);
+            debugOutput(box2);
+            debugOutput(box3);
         }
         std::cout << "3. Operator overloading\n";
         {
@@ -34,9 +35,9 @@ int main(int argc, char **argv) {
             Bbox2f box1{ mini };
             Bbox2f box2{ mini, mini };
             Bbox2f box3{ mini, maxi };
-            std::cout << "box1 = " << box1 << std::endl;
-            std::cout << "box2 = " << box2 << std::endl;
-            std::cout << "box3 = " << box3 << std::endl;
+            debugOutput(box1);
+            debugOutput(box2);
+            debugOutput(box3);
             assert(box1 == box2);
             assert(box1 != box3);
 
@@ -62,16 +63,17 @@ int main(int argc, char **argv) {
             bool contain = box4.contains(Point2f{ 3, 3 });
             bool overlap = box4.overlap(box3);
             auto box5 = box4.intersect(box3);
-            std::cout << "box1.empty() = " << box1.empty() << "\nbox2.empty() = " << box2.empty() << std::endl;
-            std::cout << "diag = " << diag << std::endl;
-            std::cout << "measure = " << measure << std::endl;
-            std::cout << "norm_coord = " << norm_coord << std::endl;
-            std::cout << "real_coord = " << real_coord << std::endl;
-            std::cout << "contain = " << contain << std::endl;
-            std::cout << "overlap = " << overlap << std::endl;
-            std::cout << "box3 = " << box3 << std::endl;
-            std::cout << "box4 = " << box4 << std::endl;
-            std::cout << "box5 = " << box5 << std::endl;
+            debugOutput(box1.empty());
+            debugOutput(box2.empty());
+            debugOutput(diag);
+            debugOutput(measure);
+            debugOutput(norm_coord);
+            debugOutput(real_coord);
+            debugOutput(contain);
+            debugOutput(overlap);
+            debugOutput(box3);
+            debugOutput(box4);
+            debugOutput(box5);
             std::cout << "corners = " << box2.corner(0) << ' ' << box2.corner(1) << ' ' << box2.corner(2) << ' ' << box2.corner(3) << std::endl;
             assert(box1.empty() == true and box2.empty() == false);
             assert((diag == Vector2f{ 2, 2 }));
@@ -99,9 +101,9 @@ int main(int argc, char **argv) {
             Bbox3f box1;
             Bbox3f box2{ mini };
             Bbox3f box3{ mini, maxi };
-            std::cout << "box1 = " << box1 << std::endl;
-            std::cout << "box2 = " << box2 << std::endl;
-            std::cout << "box3 = " << box3 << std::endl;
+            debugOutput(box1);
+            debugOutput(box2);
+            debugOutput(box3);
         }
         std::cout << "3. Operator overloading\n";
         {
@@ -110,9 +112,9 @@ int main(int argc, char **argv) {
             Bbox3f box1{ mini };
             Bbox3f box2{ mini, mini };
             Bbox3f box3{ mini, maxi };
-            std::cout << "box1 = " << box1 << std::endl;
-            std::cout << "box2 = " << box2 << std::endl;
-            std::cout << "box3 = " << box3 << std::endl;
+            debugOutput(box1);
+            debugOutput(box2);
+            debugOutput(box3);
             assert(box1 == box2);
             assert(box1 != box3);
 
@@ -138,16 +140,17 @@ int main(int argc, char **argv) {
             bool contain = box4.contains(Point3f{ 3, 3, 3 });
             bool overlap = box4.overlap(box3);
             auto box5 = box4.intersect(box3);
-            std::cout << "box1.empty() = " << box1.empty() << "\nbox2.empty() = " << box2.empty() << std::endl;
-            std::cout << "diag = " << diag << std::endl;
-            std::cout << "measure = " << measure << std::endl;
-            std::cout << "norm_coord = " << norm_coord << std::endl;
-            std::cout << "real_coord = " << real_coord << std::endl;
-            std::cout << "contain = " << contain << std::endl;
-            std::cout << "overlap = " << overlap << std::endl;
-            std::cout << "box3 = " << box3 << std::endl;
-            std::cout << "box4 = " << box4 << std::endl;
-            std::cout << "box5 = " << box5 << std::endl;
+            debugOutput(box1.empty());
+            debugOutput(box2.empty());
+            debugOutput(diag);
+            debugOutput(measure);
+            debugOutput(norm_coord);
+            debugOutput(real_coord);
+            debugOutput(contain);
+            debugOutput(overlap);
+            debugOutput(box3);
+            debugOutput(box4);
+            debugOutput(box5);
             std::cout << "corners = " << box2.corner(0) << ' ' << box2.corner(1) << ' ' << box2.corner(2) << ' ' << box2.corner(3) << ' ' << box2.corner(4) << ' ' << box2.corner(5) << ' ' << box2.corner(6) << ' ' << box2.corner(7) << std::endl;
             assert(box1.empty() == true and box2.empty() == false);
             assert((diag == Vector3f{ 3, 3, 3 }));

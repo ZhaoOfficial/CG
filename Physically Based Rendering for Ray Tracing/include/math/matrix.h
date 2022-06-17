@@ -8,13 +8,13 @@ PBRT_NAMESPACE_START
 
 // return ad - bc
 template<NumericType Number>
-Number crossProductDifference(Number a, Number b, Number c, Number d) {
+constexpr Number crossProductDifference(Number a, Number b, Number c, Number d) {
     return a * d - b * c;
 }
 
 // return ad + bc
 template<NumericType Number>
-Number crossProductSum(Number a, Number b, Number c, Number d) {
+constexpr Number crossProductSum(Number a, Number b, Number c, Number d) {
     return a * d + b * c;
 }
 

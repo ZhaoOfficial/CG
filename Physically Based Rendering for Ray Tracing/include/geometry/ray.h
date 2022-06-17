@@ -14,6 +14,7 @@ struct Ray {
         Float time = Float(0.0),
         Medium const* medium = nullptr
     ) noexcept;
+    // @return p: p = o + d * t
     Point3f operator()(Float t) const;
 
     friend std::ostream& operator<<(std::ostream& out, Ray const& r);

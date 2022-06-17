@@ -11,7 +11,12 @@ class Bbox3 {
 public:
     //! Constructor and destructor
     Bbox3() = default;
+    // A bounding box center at given `point`, and is empty.
+    // @param[in] `point`: the center point.
     explicit Bbox3(Point3<T> const& point) : minimum{point}, maximum{point} {}
+    // A bounding box whose bounary is defined by the given two points.
+    // @param[in] `p1`: one point, take the component-wise operation to define the box.
+    // @param[in] `p2`: one point, take the component-wise operation to define the box.
     Bbox3(
         Point3<T> const& p1, Point3<T> const& p2
     ) : minimum(p1.cwiseMin(p2)), maximum(p1.cwiseMax(p2)) {}
@@ -35,12 +40,23 @@ public:
     //! Operator overload
 
     //! Auxiliary functions
+    // Check if the bounding box is empty.
+    // The box is empty if it is empty alone one axis.
     bool empty() const { return (this->minimum.x >= this->maximum.x) or (this->minimum.y >= this->maximum.y); }
+
+    // Return a vector records the length of the bounding box along each axis.
     Vector3<T> diagonal() const { return this->maximum - this->minimum; }
+
     // The measure (area, volume) of the box.
     T measure() const { Vector3<T> diag = this->diagonal(); return (diag.x * diag.y * diag.z); }
 
-    Vector3<T> normCoord(Point3<T> const& point) const {
+    // Map a given `point` from the standard coordinate system
+    // to the bounding box coordinate system
+    // whose origin is the minimum point of the box
+    // and axes are the edge of the box.
+    // @param[in] `point`: the point to be normalized.
+    // @return result: the normalized point.
+    Point3<T> normCoord(Point3<T> const& point) const {
         Vector3<T> result = (point - this->minimum);
         Vector3<T> diag = this->diagonal();
         result.x /= diag.x;
@@ -49,15 +65,19 @@ public:
         return result;
     }
 
+    // The inverse of `normCoord`.
     Point3<T> realCoord(Vector3<T> const& t) {
         return lerp(t, this->minimum, this->maximum);
     }
 
+    // In-place expand the box with the given `point`.
+    // The new box will exactly contain the old box and `point`.
     void expand(Point3<T> const& point) {
         this->minimum = this->minimum.cwiseMin(point);
         this->maximum = this->maximum.cwiseMax(point);
     }
 
+    // Take union of two box, return a new box that exactly contain two old box.
     Bbox3 unions(Bbox3 const& rhs) {
         auto temp = *this;
         temp.minimum = this->minimum.cwiseMin(rhs.minimum);
@@ -65,6 +85,7 @@ public:
         return temp;
     }
 
+    // Take intersection of two box, return a new box.
     Bbox3 intersect(Bbox3 const& rhs) {
         auto temp = *this;
         temp.minimum = this->minimum.cwiseMax(rhs.minimum);
@@ -72,6 +93,7 @@ public:
         return temp;
     }
 
+    // Check if two box overlap with each other.
     bool overlap(Bbox3 const& rhs) {
         return (
             (this->minimum.x <= rhs.maximum.x) and (this->minimum.y <= rhs.maximum.y) and (this->minimum.z <= rhs.maximum.z) and
@@ -79,6 +101,7 @@ public:
         );
     }
 
+    // Check if the given `point` is inside the box.
     bool contains(Point3<T> const& point) const {
         return (
             (this->minimum.x <= point.x) and (this->minimum.y <= point.y) and (this->minimum.z <= point.z) and
