@@ -2,7 +2,6 @@
 #include <cmath>
 #include <iostream>
 
-#include "common.h"
 #include "debug.h"
 #include "geometry/vector2.h"
 #include "geometry/vector3.h"
@@ -181,6 +180,7 @@ int main(int argc, char **argv) {
             auto abs_vec3 = abs(vec3_4);
             auto normalized_vec3 = normalized(Vector3f{2, 3, 6});
             auto cross_vec3 = cross(Vector3f{1, 0, 0}, Vector3f{0, 1, 0});
+            auto vop = volumeOfParallelepiped(std::array<Float, 9> {1, 3, 0, -2, 0, 2, -1, 3, -1});
             debugOutput(min_vec3);
             debugOutput(max_vec3);
             debugOutput(prod_vec3);
@@ -189,6 +189,7 @@ int main(int argc, char **argv) {
             debugOutput(abs_vec3);
             debugOutput(normalized_vec3);
             debugOutput(cross_vec3);
+            debugOutput(vop);
             assert((min_vec3 == Vector3f{1.0, -0.5, -1.0}));
             assert((max_vec3 == Vector3f{2.0, 0.25, 2.0}));
             assert((prod_vec3 == Vector3f{2.0, -0.125, -2.0}));
@@ -197,6 +198,7 @@ int main(int argc, char **argv) {
             assert((abs_vec3 == Vector3f{2.0, 0.5, 1.0}));
             assert((normalized_vec3 == (Vector3f{2, 3, 6} / Float(7))));
             assert((cross_vec3 == Vector3f{0, 0, 1}));
+            assert((vop == Float(-18)));
         }
     }
 

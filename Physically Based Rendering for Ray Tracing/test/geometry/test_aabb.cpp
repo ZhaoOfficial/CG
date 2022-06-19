@@ -1,7 +1,6 @@
 #include <cassert>
 #include <iostream>
 
-#include "common.h"
 #include "debug.h"
 #include "geometry/aabb2.h"
 #include "geometry/aabb3.h"

@@ -1,6 +1,7 @@
 #ifndef _PBRT_TUPLE2_H_
 #define _PBRT_TUPLE2_H_
 
+#include <cassert>
 #include <type_traits>
 
 #include "math/arithmetic.h"

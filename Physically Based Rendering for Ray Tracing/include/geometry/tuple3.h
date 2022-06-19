@@ -1,6 +1,7 @@
 #ifndef _PBRT_TUPLE3_H_
 #define _PBRT_TUPLE3_H_
 
+#include <cassert>
 #include <type_traits>
 
 #include "math/arithmetic.h"
@@ -160,15 +161,6 @@ struct Tuple3 {
     template <typename U>
     friend decltype(T{} * U{}) dot(Container<T> const& lhs, Container<U> const& rhs) {
         return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z;
-    }
-    // Return the cross-product of two container.
-    template <typename U>
-    friend Container<decltype(T{} * U{})> cross(Container<T> const& lhs, Container<U> const& rhs) {
-        return Container<decltype(T{} * U{})> {
-            lhs.y * rhs.z - lhs.z * rhs.y,
-            lhs.z * rhs.x - lhs.x * rhs.z,
-            lhs.x * rhs.y - lhs.y * rhs.x
-        };
     }
     // Return the absolute value of component in the container.
     friend Container<T> abs(Container<T> const& rhs) {

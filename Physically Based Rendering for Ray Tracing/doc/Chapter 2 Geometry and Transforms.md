@@ -58,5 +58,18 @@ An alternate implementation would be to have a single template class that is als
 
 ## 2.7 Transformations
 
+### 2.7.1 Homogeneous Coordinates
+
+```cpp
+template <std::size_t N>
+class SquareMatrix;
+```
+
+这种写法是 `Non-type template paramter`。从 `C++20` 开始，任何类型都可以作为非类型模板参数。而在 `C++17` 时候，浮点数和 `class` 还不能做非类型模板参数。
+
+`pbrt` 中的 `Shapes` 存储一个指向 `Transform` 的指针。
+`Shapes` in `pbrt` store a pointer to a `Transform`.
+
+### 2.7.2 Basic Operations
 
 

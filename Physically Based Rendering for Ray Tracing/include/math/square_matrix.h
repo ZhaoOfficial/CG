@@ -2,13 +2,13 @@
 #define _PBRT_SQUARE_MATRIX_H_
 
 #include <algorithm>
+#include <array>
 #include <functional>
 
-#include "matrix.h"
+#include "arithmetic.h"
 #include "geometry/vector2.h"
+#include "geometry/vector3.h"
 #include "../common.h"
-
-PBRT_NAMESPACE_START
 
 static char const* format[] = {
     "[[%-.4g]]",
@@ -17,21 +17,20 @@ static char const* format[] = {
     "\n[[%.4g, %.4g, %.4g, %.4g]\n [%.4g, %.4g, %.4g, %.4g]\n [%.4g, %.4g, %.4g, %.4g]\n [%.4g, %.4g, %.4g, %.4g]]"
 };
 
+PBRT_NAMESPACE_START
+
+// A N * N square matrix.
 template <std::size_t N>
 class SquareMatrix {
 public:
     //! Constructor and destructor
     SquareMatrix() = default;
-    SquareMatrix(Float const mat[N * N]) {
-        for (std::size_t i{}; i < N * N; ++i) {
-            this->data_1d[i] = mat[i];
-        }
+    SquareMatrix(std::array<Float, N * N> const& arr) {
+        std::copy(arr.begin(), arr.end(), this->data_1d);
     }
-    SquareMatrix(Float const mat[N][N]) {
+    SquareMatrix(std::array<std::array<Float, N>, N> const& arr) {
         for (std::size_t i{}; i < N; ++i) {
-            for (std::size_t j{}; j < N; ++j) {
-                this->data[i][j] = mat[i][j];
-            }
+            std::copy(arr[i].begin(), arr[i].end(), this->data[i]);
         }
     }
     //! Constructor and destructor
@@ -131,6 +130,7 @@ public:
         return SquareMatrix{};
     }
 
+    // Check if the matrix is an identity matrix.
     bool isIdentity() const {
         // (N - 1) of (1, 0, 0, ...) pattern with (N) (0)s.
         for (std::size_t i = 0; i < N - 1; ++i) {
@@ -204,16 +204,17 @@ constexpr SquareMatrix<1> SquareMatrix<1>::inverse() const {
     if (this->data[0][0] == Float(0)) {
         return SquareMatrix<1>{};
     }
-    Float mat[1] = { Float(1) / this->data[0][0] };
-    return SquareMatrix<1>{mat};
+    std::array<Float, 1> arr = { Float(1) / this->data[0][0] };
+    return SquareMatrix<1>{arr};
 }
 
 //* N = 2
 template <>
 constexpr Float SquareMatrix<2>::determinant() const {
+    Float const (*A)[2] = this->data;
     return crossProductDifference(
-        this->data[0][0], this->data[0][1],
-        this->data[1][0], this->data[1][1]
+        A[0][0], A[0][1],
+        A[1][0], A[1][1]
     );
 }
 template <>
@@ -224,30 +225,25 @@ constexpr SquareMatrix<2> SquareMatrix<2>::inverse() const {
     }
     Float inv_det = Float(1) / det;
 
-    Float mat[4] {
+    std::array<Float, 4> arr {
          this->data[1][1], -this->data[0][1],
         -this->data[1][0],  this->data[0][0]
     };
-    mat[0] *= inv_det;
-    mat[1] *= inv_det;
-    mat[2] *= inv_det;
-    mat[3] *= inv_det;
-    
-    return SquareMatrix<2>{mat};
+    for (auto&& i : arr) { i *= inv_det; }
+
+    return SquareMatrix<2>{arr};
 }
 
 //* N = 3
 template <>
 constexpr Float SquareMatrix<3>::determinant() const {
-    Float a1 = this->data[0][0] * this->data[1][1] * this->data[2][2];
-    Float a2 = this->data[0][1] * this->data[1][2] * this->data[2][0];
-    Float a3 = this->data[0][2] * this->data[1][0] * this->data[2][1];
-
-    Float b1 = this->data[0][0] * this->data[1][2] * this->data[2][1];
-    Float b2 = this->data[0][1] * this->data[1][0] * this->data[2][2];
-    Float b3 = this->data[0][2] * this->data[1][1] * this->data[2][0];
-
-    return a1 + a2 + a3 - b1 - b2 - b3;
+    return volumeOfParallelepiped(
+        std::array<Float, 9>{
+            this->data[0][0], this->data[0][1], this->data[0][2],
+            this->data[1][0], this->data[1][1], this->data[1][2],
+            this->data[2][0], this->data[2][1], this->data[2][2]
+        }
+    );
 }
 template <>
 constexpr SquareMatrix<3> SquareMatrix<3>::inverse() const {
@@ -257,7 +253,7 @@ constexpr SquareMatrix<3> SquareMatrix<3>::inverse() const {
     }
     Float inv_det = Float(1) / det;
 
-    Float mat[9] {
+    std::array<Float, 9> arr {
         crossProductDifference(this->data[1][1], this->data[1][2], this->data[2][1], this->data[2][2]),
         crossProductDifference(this->data[2][1], this->data[2][2], this->data[0][1], this->data[0][2]),
         crossProductDifference(this->data[0][1], this->data[0][2], this->data[1][1], this->data[1][2]),
@@ -270,9 +266,9 @@ constexpr SquareMatrix<3> SquareMatrix<3>::inverse() const {
         crossProductDifference(this->data[2][0], this->data[2][1], this->data[0][0], this->data[0][1]),
         crossProductDifference(this->data[0][0], this->data[0][1], this->data[1][0], this->data[1][1])
     };
-    for (auto&& i : mat) { i *= inv_det; }
+    for (auto&& i : arr) { i *= inv_det; }
 
-    return SquareMatrix<3>{mat};
+    return SquareMatrix<3>{arr};
 }
 
 //* N = 4
@@ -311,11 +307,92 @@ constexpr SquareMatrix<4> SquareMatrix<4>::inverse() const {
     }
     Float inv_det = Float(1) / det;
 
-    Float mat[16] {
+    // The adjacent matrix.
+    std::array<Float, 16> arr {
+        volumeOfParallelepiped(std::array<Float, 9>{
+            this->data[1][1], this->data[1][2], this->data[1][3],
+            this->data[2][1], this->data[2][2], this->data[2][3],
+            this->data[3][1], this->data[3][2], this->data[3][3]
+        }),
+        volumeOfParallelepiped(std::array<Float, 9>{
+            this->data[2][1], this->data[2][2], this->data[2][3],
+            this->data[0][1], this->data[0][2], this->data[0][3],
+            this->data[3][1], this->data[3][2], this->data[3][3]
+        }),
+        volumeOfParallelepiped(std::array<Float, 9>{
+            this->data[0][1], this->data[0][2], this->data[0][3],
+            this->data[1][1], this->data[1][2], this->data[1][3],
+            this->data[3][1], this->data[3][2], this->data[3][3]
+        }),
+        volumeOfParallelepiped(std::array<Float, 9>{
+            this->data[1][1], this->data[1][2], this->data[1][3],
+            this->data[0][1], this->data[0][2], this->data[0][3],
+            this->data[2][1], this->data[2][2], this->data[2][3]
+        }),
+        volumeOfParallelepiped(std::array<Float, 9>{
+            this->data[1][0], this->data[1][2], this->data[1][3],
+            this->data[2][0], this->data[2][2], this->data[2][3],
+            this->data[3][0], this->data[3][2], this->data[3][3]
+        }),
+        volumeOfParallelepiped(std::array<Float, 9>{
+            this->data[2][0], this->data[2][2], this->data[2][3],
+            this->data[0][0], this->data[0][2], this->data[0][3],
+            this->data[3][0], this->data[3][2], this->data[3][3]
+        }),
+        volumeOfParallelepiped(std::array<Float, 9>{
+            this->data[0][0], this->data[0][2], this->data[0][3],
+            this->data[1][0], this->data[1][2], this->data[1][3],
+            this->data[3][0], this->data[3][2], this->data[3][3]
+        }),
+        volumeOfParallelepiped(std::array<Float, 9>{
+            this->data[1][0], this->data[1][2], this->data[1][3],
+            this->data[0][0], this->data[0][2], this->data[0][3],
+            this->data[2][0], this->data[2][2], this->data[2][3]
+        }),
+        volumeOfParallelepiped(std::array<Float, 9>{
+            this->data[1][0], this->data[1][1], this->data[1][3],
+            this->data[2][0], this->data[2][1], this->data[2][3],
+            this->data[3][0], this->data[3][1], this->data[3][3]
+        }),
+        volumeOfParallelepiped(std::array<Float, 9>{
+            this->data[2][0], this->data[2][1], this->data[2][3],
+            this->data[0][0], this->data[0][1], this->data[0][3],
+            this->data[3][0], this->data[3][1], this->data[3][3]
+        }),
+        volumeOfParallelepiped(std::array<Float, 9>{
+            this->data[0][0], this->data[0][1], this->data[0][3],
+            this->data[1][0], this->data[1][1], this->data[1][3],
+            this->data[3][0], this->data[3][1], this->data[3][3]
+        }),
+        volumeOfParallelepiped(std::array<Float, 9>{
+            this->data[1][0], this->data[1][1], this->data[1][3],
+            this->data[0][0], this->data[0][1], this->data[0][3],
+            this->data[2][0], this->data[2][1], this->data[2][3],
+        }),
+        volumeOfParallelepiped(std::array<Float, 9>{
+            this->data[1][0], this->data[1][1], this->data[1][2],
+            this->data[2][0], this->data[2][1], this->data[2][2],
+            this->data[3][0], this->data[3][1], this->data[3][2]
+        }),
+        volumeOfParallelepiped(std::array<Float, 9>{
+            this->data[2][0], this->data[2][1], this->data[2][2],
+            this->data[0][0], this->data[0][1], this->data[0][2],
+            this->data[3][0], this->data[3][1], this->data[3][2]
+        }),
+        volumeOfParallelepiped(std::array<Float, 9>{
+            this->data[0][0], this->data[0][1], this->data[0][2],
+            this->data[1][0], this->data[1][1], this->data[1][2],
+            this->data[3][0], this->data[3][1], this->data[3][2]
+        }),
+        volumeOfParallelepiped(std::array<Float, 9>{
+            this->data[1][0], this->data[1][1], this->data[1][2],
+            this->data[0][0], this->data[0][1], this->data[0][2],
+            this->data[2][0], this->data[2][1], this->data[2][2]
+        }),
     };
-    for (auto&& i : mat) { i *= inv_det; }
+    for (auto&& i : arr) { i *= inv_det; }
 
-    return SquareMatrix<4>{};
+    return SquareMatrix<4>{arr};
 }
 
 //! Specializations of N = 1, 2, 3, 4
