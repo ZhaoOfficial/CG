@@ -13,6 +13,9 @@ To define a frame we need a point and a set of vectors, but we can only meaningf
 `pbrt` uses a left-handed coordinate system.
 `pbrt` 使用左手坐标系。
 
+- Left-handed cartesian coordinates satisfies that $\mathbf e_x\times\mathbf e_y=-\mathbf e_z$.
+- Right-handed cartesian coordinates satisfies that $\mathbf e_x\times\mathbf e_y=\mathbf e_z$.
+
 ## 2.2 Vectors
 
 ```c++
@@ -70,6 +73,61 @@ class SquareMatrix;
 `pbrt` 中的 `Shapes` 存储一个指向 `Transform` 的指针。
 `Shapes` in `pbrt` store a pointer to a `Transform`.
 
+在 Homogeneous Coordinates 里面，点用 1 表示，向量用 0 表示。
+
 ### 2.7.2 Basic Operations
+
+创建新的变换时，它默认为恒等变换。
+When a new Transformis created, it defaults to the identity transformation.
+
+### 2.7.3 Translations
+
+$$T(\mathbf t)=\begin{bmatrix}I&\mathbf t\\\mathbf 0^T&1\end{bmatrix}\quad T^{-1}(\mathbf t)=\begin{bmatrix}I&-\mathbf t\\\mathbf 0^T&1\end{bmatrix}$$
+
+### 2.7.4 Scaling
+
+$$
+S(\mathbf s)=\begin{bmatrix}\text{diag}(\mathbf s)&\mathbf 0\\\mathbf 0^T&1\end{bmatrix}\quad S^{-1}(\mathbf s)=\begin{bmatrix}\text{diag}(\mathbf s)^{-1}&\mathbf 0\\\mathbf 0^T&1\end{bmatrix}
+$$
+
+### 2.7.5 $x$, $y$, and $z$ Axis Rotations
+
+$$
+\begin{gather*}
+R_{x}(\theta)=
+\begin{bmatrix}
+1&0&0&0\\
+0&\cos\theta&-\sin\theta&0\\
+0&\sin\theta&\cos\theta&0\\
+0&0&0&1
+\end{bmatrix}\\
+R_{y}(\theta)=
+\begin{bmatrix}
+\cos\theta&0&\sin\theta&0\\
+0&1&0&0\\
+-\sin\theta&0&\cos\theta&0\\
+0&0&0&1\\
+\end{bmatrix}\\
+R_{z}(\theta)=
+\begin{bmatrix}
+\cos\theta&-\sin\theta&0&0\\
+\sin\theta&\cos\theta&0&0\\
+0&0&1&0\\
+0&0&0&1
+\end{bmatrix}
+\end{gather*}
+$$
+
+有 $R_{\star}^{-1}(\theta)=R_{\star}(\theta)$。$\theta$ 表示逆时针旋转的角度。旋转矩阵可以通过沿着对应的轴的正方向观察另外两个轴的变化来得到。
+With $R_{\star}^{-1}(\theta)=R_{\star}^{T}(\theta)$. $\theta$ represents the angle rotated counterclockwisely. The rotation matrix can be obtained by observing the changes of the other two axes along the positive direction of the corresponding axis.
+
+### 2.7.6 Rotation around an Arbitrary Axis
+
+## 2.8 Applying Transformations
+
+
+
+
+
 
 

@@ -8,7 +8,7 @@ args = parser.parse_args()
 
 def countLines(root: str, filename: str):
     """Counts lines in the given file."""
-    if not filename.endswith(('.py', '.h', '.hpp', '.cpp', 'CMakeLists.txt')):
+    if not filename.endswith(('.py', '.h', '.hpp', '.cpp', 'CMakeLists.txt', '.md')):
         return 0
     with open(os.path.join(root, filename), 'r', encoding='utf8') as f:
         count = len(f.readlines())

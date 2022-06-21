@@ -1,6 +1,8 @@
 #ifndef _PBRT_DEBUG_H_
 #define _PBRT_DEBUG_H_
 
+#include <iomanip>
+
 #include "common.h"
 
 PBRT_NAMESPACE_START

@@ -54,27 +54,19 @@ public:
         return this->operator*=(inv_num);
     }
     friend SquareMatrix operator+(SquareMatrix const& lhs, SquareMatrix const& rhs) {
-        auto temp = lhs;
-        temp += rhs;
-        return temp;
+        return SquareMatrix(lhs) += rhs;
     }
     friend SquareMatrix operator-(SquareMatrix const& lhs, SquareMatrix const& rhs) {
-        auto temp = lhs;
-        temp -= rhs;
-        return temp;
+        return SquareMatrix(lhs) -= rhs;
     }
     friend SquareMatrix operator*(SquareMatrix const& lhs, Float rhs) {
-        auto temp = lhs;
-        temp *= rhs;
-        return temp;
+        return SquareMatrix(lhs) *= rhs;
     }
     friend SquareMatrix operator*(Float lhs, SquareMatrix const& rhs) {
-        return rhs * lhs;
+        return SquareMatrix(rhs) *= lhs;
     }
     friend SquareMatrix operator/(SquareMatrix const& lhs, Float rhs) {
-        auto temp = lhs;
-        temp /= rhs;
-        return temp;
+        return SquareMatrix(lhs) /= rhs;
     }
     //* Comparation operators
     friend bool operator==(SquareMatrix const& lhs, SquareMatrix const& rhs) {
@@ -126,11 +118,12 @@ public:
     //! Operator overloading
 
     //! Auxiliary functions
+    // A matrix whose entities are all 0s.
     static SquareMatrix Zeros() {
         return SquareMatrix{};
     }
 
-    // Check if the matrix is an identity matrix.
+    // Check if this matrix is an identity matrix.
     bool isIdentity() const {
         // (N - 1) of (1, 0, 0, ...) pattern with (N) (0)s.
         for (std::size_t i = 0; i < N - 1; ++i) {
@@ -150,6 +143,7 @@ public:
         return true;
     }
 
+    // Return the transpose of this matrix.
     SquareMatrix transpose() const {
         SquareMatrix T;
         for (std::size_t i{}; i < N; ++i) {
@@ -160,25 +154,28 @@ public:
         return T;
     }
 
+    // Calculate the determinant by cofactors.
+    // Insufficient but we barely use it.
     constexpr Float determinant() const {
-        return 0;
+        SquareMatrix<N - 1> sub;
+        Float det = 0;
+        for (std::size_t i{}; i < N; ++i) {
+            // Sub-matrix without row 0 and column i
+            for (std::size_t j{}; j < N - 1; ++j)
+                for (std::size_t k{}; k < N - 1; ++k)
+                    sub[{j, k}] = this->data[j + 1][k < i ? k : k + 1];
+
+            Float sign = (i & 1) ? Float(-1) : Float(1);
+            det += sign * this->data[0][i] * sub.determinant();
+        }
+        return det;
     }
 
     constexpr SquareMatrix inverse() const {
+        static_assert(N < 5, "Not Implemented.");
         return {};
     }
     //! Auxiliary functions
-
-private:
-    Float absMax() const {
-        Float abs_max{};
-        for (std::size_t i = 0; i < N * N; ++i) {
-            if (abs_max < std::abs(this->data_1d[i])) {
-                abs_max = this->data_1d[i];
-            }
-        }
-        return abs_max;
-    }
 
 private:
     Float* begin() { return std::begin(this->data_1d); }
@@ -211,10 +208,9 @@ constexpr SquareMatrix<1> SquareMatrix<1>::inverse() const {
 //* N = 2
 template <>
 constexpr Float SquareMatrix<2>::determinant() const {
-    Float const (*A)[2] = this->data;
     return crossProductDifference(
-        A[0][0], A[0][1],
-        A[1][0], A[1][1]
+        this->data[0][0], this->data[0][1],
+        this->data[1][0], this->data[1][1]
     );
 }
 template <>
@@ -275,33 +271,51 @@ constexpr SquareMatrix<3> SquareMatrix<3>::inverse() const {
 template <>
 constexpr Float SquareMatrix<4>::determinant() const {
     // By a little trick...
-    Float M0011 = crossProductDifference(this->data[0][0], this->data[1][1], this->data[0][1], this->data[1][0]);
-    Float M0012 = crossProductDifference(this->data[0][0], this->data[1][2], this->data[0][2], this->data[1][0]);
-    Float M0013 = crossProductDifference(this->data[0][0], this->data[1][3], this->data[0][3], this->data[1][0]);
+    // Details are in https://www.geometrictools.com/Documentation/LaplaceExpansionTheorem.pdf
+    Float M0011 = crossProductDifference(this->data[0][0], this->data[0][1], this->data[1][0], this->data[1][1]);
+    Float M0012 = crossProductDifference(this->data[0][0], this->data[0][2], this->data[1][0], this->data[1][2]);
+    Float M0013 = crossProductDifference(this->data[0][0], this->data[0][3], this->data[1][0], this->data[1][3]);
 
-    Float M0112 = crossProductDifference(this->data[0][1], this->data[1][2], this->data[0][2], this->data[1][1]);
-    Float M0113 = crossProductDifference(this->data[0][1], this->data[1][3], this->data[0][3], this->data[1][1]);
-    Float M0213 = crossProductDifference(this->data[0][2], this->data[1][3], this->data[0][3], this->data[1][2]);
+    Float M0112 = crossProductDifference(this->data[0][1], this->data[0][2], this->data[1][1], this->data[1][2]);
+    Float M0113 = crossProductDifference(this->data[0][1], this->data[0][3], this->data[1][1], this->data[1][3]);
+    Float M0213 = crossProductDifference(this->data[0][2], this->data[0][3], this->data[1][2], this->data[1][3]);
 
-    Float M2031 = crossProductDifference(this->data[2][0], this->data[3][1], this->data[2][1], this->data[3][0]);
-    Float M2032 = crossProductDifference(this->data[2][0], this->data[3][2], this->data[2][2], this->data[3][0]);
-    Float M2033 = crossProductDifference(this->data[2][0], this->data[3][3], this->data[2][3], this->data[3][0]);
+    Float M2031 = crossProductDifference(this->data[2][0], this->data[2][1], this->data[3][0], this->data[3][1]);
+    Float M2032 = crossProductDifference(this->data[2][0], this->data[2][2], this->data[3][0], this->data[3][2]);
+    Float M2033 = crossProductDifference(this->data[2][0], this->data[2][3], this->data[3][0], this->data[3][3]);
 
-    Float M2132 = crossProductDifference(this->data[2][1], this->data[3][2], this->data[2][2], this->data[3][1]);
-    Float M2133 = crossProductDifference(this->data[2][1], this->data[3][3], this->data[2][3], this->data[3][1]);
-    Float M2233 = crossProductDifference(this->data[2][1], this->data[3][3], this->data[2][3], this->data[3][2]);
+    Float M2132 = crossProductDifference(this->data[2][1], this->data[2][2], this->data[3][1], this->data[3][2]);
+    Float M2133 = crossProductDifference(this->data[2][1], this->data[2][3], this->data[3][1], this->data[3][3]);
+    Float M2233 = crossProductDifference(this->data[2][2], this->data[2][3], this->data[3][2], this->data[3][3]);
 
-    Float result = (
-        crossProductDifference(M0011, M0012, M2133, M2233) + 
-        crossProductDifference(M0112, M0113, M2032, M2033) + 
-        crossProductSum(M0013, M0213, M2031, M2132)
+    return mulAddPair(
+        M0011, M2233, -M0012, M2133, M0013, M2132,
+        M0112, M2033, M0113, -M2032, M0213, M2031
     );
-
-    return 0;
 }
 template <>
 constexpr SquareMatrix<4> SquareMatrix<4>::inverse() const {
-    Float det = this->determinant();
+    Float M0011 = crossProductDifference(this->data[0][0], this->data[0][1], this->data[1][0], this->data[1][1]);
+    Float M0012 = crossProductDifference(this->data[0][0], this->data[0][2], this->data[1][0], this->data[1][2]);
+    Float M0013 = crossProductDifference(this->data[0][0], this->data[0][3], this->data[1][0], this->data[1][3]);
+
+    Float M0112 = crossProductDifference(this->data[0][1], this->data[0][2], this->data[1][1], this->data[1][2]);
+    Float M0113 = crossProductDifference(this->data[0][1], this->data[0][3], this->data[1][1], this->data[1][3]);
+    Float M0213 = crossProductDifference(this->data[0][2], this->data[0][3], this->data[1][2], this->data[1][3]);
+
+    Float M2031 = crossProductDifference(this->data[2][0], this->data[2][1], this->data[3][0], this->data[3][1]);
+    Float M2032 = crossProductDifference(this->data[2][0], this->data[2][2], this->data[3][0], this->data[3][2]);
+    Float M2033 = crossProductDifference(this->data[2][0], this->data[2][3], this->data[3][0], this->data[3][3]);
+
+    Float M2132 = crossProductDifference(this->data[2][1], this->data[2][2], this->data[3][1], this->data[3][2]);
+    Float M2133 = crossProductDifference(this->data[2][1], this->data[2][3], this->data[3][1], this->data[3][3]);
+    Float M2233 = crossProductDifference(this->data[2][2], this->data[2][3], this->data[3][2], this->data[3][3]);
+
+    Float det = mulAddPair(
+        M0011, M2233, -M0012, M2133, M0013, M2132,
+        M0112, M2033, M0113, -M2032, M0213, M2031
+    );
+
     if (det == 0) {
         return SquareMatrix<4>{};
     }
@@ -309,86 +323,25 @@ constexpr SquareMatrix<4> SquareMatrix<4>::inverse() const {
 
     // The adjacent matrix.
     std::array<Float, 16> arr {
-        volumeOfParallelepiped(std::array<Float, 9>{
-            this->data[1][1], this->data[1][2], this->data[1][3],
-            this->data[2][1], this->data[2][2], this->data[2][3],
-            this->data[3][1], this->data[3][2], this->data[3][3]
-        }),
-        volumeOfParallelepiped(std::array<Float, 9>{
-            this->data[2][1], this->data[2][2], this->data[2][3],
-            this->data[0][1], this->data[0][2], this->data[0][3],
-            this->data[3][1], this->data[3][2], this->data[3][3]
-        }),
-        volumeOfParallelepiped(std::array<Float, 9>{
-            this->data[0][1], this->data[0][2], this->data[0][3],
-            this->data[1][1], this->data[1][2], this->data[1][3],
-            this->data[3][1], this->data[3][2], this->data[3][3]
-        }),
-        volumeOfParallelepiped(std::array<Float, 9>{
-            this->data[1][1], this->data[1][2], this->data[1][3],
-            this->data[0][1], this->data[0][2], this->data[0][3],
-            this->data[2][1], this->data[2][2], this->data[2][3]
-        }),
-        volumeOfParallelepiped(std::array<Float, 9>{
-            this->data[1][0], this->data[1][2], this->data[1][3],
-            this->data[2][0], this->data[2][2], this->data[2][3],
-            this->data[3][0], this->data[3][2], this->data[3][3]
-        }),
-        volumeOfParallelepiped(std::array<Float, 9>{
-            this->data[2][0], this->data[2][2], this->data[2][3],
-            this->data[0][0], this->data[0][2], this->data[0][3],
-            this->data[3][0], this->data[3][2], this->data[3][3]
-        }),
-        volumeOfParallelepiped(std::array<Float, 9>{
-            this->data[0][0], this->data[0][2], this->data[0][3],
-            this->data[1][0], this->data[1][2], this->data[1][3],
-            this->data[3][0], this->data[3][2], this->data[3][3]
-        }),
-        volumeOfParallelepiped(std::array<Float, 9>{
-            this->data[1][0], this->data[1][2], this->data[1][3],
-            this->data[0][0], this->data[0][2], this->data[0][3],
-            this->data[2][0], this->data[2][2], this->data[2][3]
-        }),
-        volumeOfParallelepiped(std::array<Float, 9>{
-            this->data[1][0], this->data[1][1], this->data[1][3],
-            this->data[2][0], this->data[2][1], this->data[2][3],
-            this->data[3][0], this->data[3][1], this->data[3][3]
-        }),
-        volumeOfParallelepiped(std::array<Float, 9>{
-            this->data[2][0], this->data[2][1], this->data[2][3],
-            this->data[0][0], this->data[0][1], this->data[0][3],
-            this->data[3][0], this->data[3][1], this->data[3][3]
-        }),
-        volumeOfParallelepiped(std::array<Float, 9>{
-            this->data[0][0], this->data[0][1], this->data[0][3],
-            this->data[1][0], this->data[1][1], this->data[1][3],
-            this->data[3][0], this->data[3][1], this->data[3][3]
-        }),
-        volumeOfParallelepiped(std::array<Float, 9>{
-            this->data[1][0], this->data[1][1], this->data[1][3],
-            this->data[0][0], this->data[0][1], this->data[0][3],
-            this->data[2][0], this->data[2][1], this->data[2][3],
-        }),
-        volumeOfParallelepiped(std::array<Float, 9>{
-            this->data[1][0], this->data[1][1], this->data[1][2],
-            this->data[2][0], this->data[2][1], this->data[2][2],
-            this->data[3][0], this->data[3][1], this->data[3][2]
-        }),
-        volumeOfParallelepiped(std::array<Float, 9>{
-            this->data[2][0], this->data[2][1], this->data[2][2],
-            this->data[0][0], this->data[0][1], this->data[0][2],
-            this->data[3][0], this->data[3][1], this->data[3][2]
-        }),
-        volumeOfParallelepiped(std::array<Float, 9>{
-            this->data[0][0], this->data[0][1], this->data[0][2],
-            this->data[1][0], this->data[1][1], this->data[1][2],
-            this->data[3][0], this->data[3][1], this->data[3][2]
-        }),
-        volumeOfParallelepiped(std::array<Float, 9>{
-            this->data[1][0], this->data[1][1], this->data[1][2],
-            this->data[0][0], this->data[0][1], this->data[0][2],
-            this->data[2][0], this->data[2][1], this->data[2][2]
-        }),
+        mulAddPair( this->data[1][1], M2233, -this->data[1][2], M2133,  this->data[1][3], M2132),
+        mulAddPair(-this->data[0][1], M2233,  this->data[0][2], M2133, -this->data[0][3], M2132),
+        mulAddPair( this->data[3][1], M0213, -this->data[3][2], M0113,  this->data[3][3], M0112),
+        mulAddPair(-this->data[2][1], M0213,  this->data[2][2], M0113, -this->data[2][3], M0112),
+
+        mulAddPair(-this->data[1][0], M2233,  this->data[1][2], M2033, -this->data[1][3], M2032),
+        mulAddPair( this->data[0][0], M2233, -this->data[0][2], M2033,  this->data[0][3], M2032),
+        mulAddPair(-this->data[3][0], M0213,  this->data[3][2], M0013, -this->data[3][3], M0012),
+        mulAddPair( this->data[2][0], M0213, -this->data[2][2], M0013,  this->data[2][3], M0012),
+
+        mulAddPair( this->data[1][0], M2133, -this->data[1][1], M2033,  this->data[1][3], M2031),
+        mulAddPair(-this->data[0][0], M2133,  this->data[0][1], M2033, -this->data[0][3], M2031),
+        mulAddPair( this->data[3][0], M0113, -this->data[3][1], M0013,  this->data[3][3], M0011),
+        mulAddPair(-this->data[2][0], M0113,  this->data[2][1], M0013, -this->data[2][3], M0011),
+
+        mulAddPair(-this->data[1][0], M2132,  this->data[1][1], M2032, -this->data[1][2], M2031),
+        mulAddPair( this->data[0][0], M2132, -this->data[0][1], M2032,  this->data[0][2], M2031),
+        mulAddPair(-this->data[3][0], M0112,  this->data[3][1], M0012, -this->data[3][2], M0011),
+        mulAddPair( this->data[2][0], M0112, -this->data[2][1], M0012,  this->data[2][2], M0011),
     };
     for (auto&& i : arr) { i *= inv_det; }
 

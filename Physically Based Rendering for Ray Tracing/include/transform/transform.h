@@ -18,9 +18,18 @@ class Transform {
 public:
     //! Constructor and destructor
     Transform() = default;
-    Transform(SquareMatrix<4> const& mat, SquareMatrix<4> const& inv_mat);
+    // Check if the given matrix is invertible.
+    Transform(SquareMatrix<4> const& mat);
+    // Check if the given matrix is invertible.
     Transform(std::array<Float, 16> const& arr);
+    // Check if the given matrix is invertible.
     Transform(std::array<std::array<Float, 4>, 4> const& arr);
+    // Do not check if the given matrix is invertible.
+    Transform(SquareMatrix<4> const& mat, SquareMatrix<4> const& inv_mat);
+    // Do not check if the given matrix is invertible.
+    Transform(std::array<Float, 16> const& arr, std::array<Float, 16> const& inv_arr);
+    // Do not check if the given matrix is invertible.
+    Transform(std::array<std::array<Float, 4>, 4> const& arr, std::array<std::array<Float, 4>, 4> const& inv_arr);
     //! Constructor and destructor
 
     //! Operator overloading
@@ -46,6 +55,8 @@ public:
     bool hasScale(Float tolerance) const;
     // Perform a linear transformation on the given vector.
     Vector3f operator()(Vector3f const& v) const;
+    // Perform a linear transformation on the given ray.
+    Ray operator()(Ray const& r) const;
     //! Auxiliary functions
 
 private:
@@ -64,13 +75,17 @@ Transform rotateX(Float angle);
 Transform rotateY(Float angle);
 // @param[in] `angle`: in radius form.
 Transform rotateZ(Float angle);
+// A matrix representing the rotation around
+// the given axis with given rotation angle using Rodrigues' formula.
+// @param[in] `axis`: the axis.
+// @param[in] `angle`: in radius form.
+Transform rotateAroundAxis(Vector3f const& axis, Float angle);
 // The view matrix, A.K.A the world to camera matrix.
 // @param[in] `pos`: the position the camera currently sits.
 // @param[in] `look`: the point that the camera currently looks at.
 // @param[in] `ref_up`: a reference up direction.
 // @return matrix: the view matrix.
 Transform lookAt(Point3f const& pos, Point3f const& look, Vector3f const& ref_up);
-
 
 PBRT_NAMESPACE_END
 

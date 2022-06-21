@@ -34,6 +34,7 @@ Vector3<decltype(T{} * U{})> cross(Vector3<T> const& lhs, Vector3<U> const& rhs)
 // If the three edge vector are `a`, `b`, and `c`,
 // then the volume is `dot(cross(a, b), c)`.
 // Note that the volume may be negative.
+// 5 add, 9 multiply.
 template<NumericType Number>
 constexpr Number volumeOfParallelepiped(Vector3<Number> const& a, Vector3<Number> const& b, Vector3<Number> const& c) {
     return dot(cross(a, b), c);

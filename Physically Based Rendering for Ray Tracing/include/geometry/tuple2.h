@@ -53,34 +53,26 @@ struct Tuple2 {
     //* Arithmetic operators
     template <typename U>
     friend Container<decltype(T{} + U{})> operator+(Container<T> const& lhs, Container<U> const& rhs)  {
-        Container<T> temp = lhs;
-        temp += rhs;
-        return temp;
+        return Container<T>(lhs) += rhs;
     }
     template <typename U>
     friend Container<decltype(T{} - U{})> operator-(Container<T> const& lhs, Container<U> const& rhs) {
-        Container<T> temp = lhs;
-        temp -= rhs;
-        return temp;
+        return Container<T>(lhs) -= rhs;
     }
     friend Container<T> operator-(Container<T> const& rhs) {
         return Container<T>(-rhs.x, -rhs.y);
     }
     template <NumericType Number>
     friend Container<decltype(T{} * Number{})> operator*(Container<T> const& lhs, Number rhs) {
-        Container<T> temp = lhs;
-        temp *= rhs;
-        return temp;
+        return Container<T>(lhs) *= rhs;
     }
     template <NumericType Number>
     friend Container<decltype(T{} * Number{})> operator*(Number lhs, Container<T> const& rhs) {
-        return rhs * lhs;
+        return Container<T>(rhs) *= lhs;
     }
     template <NumericType Number>
     friend Container<decltype(T{} / Number{})> operator/(Container<T> const& lhs, Number rhs) {
-        Container<T> temp = lhs;
-        temp /= rhs;
-        return temp;
+        return Container<T>(lhs) /= rhs;
     }
     //* Comparation operators
     friend bool operator==(Container<T> const& lhs, Container<T> const& rhs) {
