@@ -117,7 +117,7 @@ int main(int argc, char **argv) {
             assert(box1 == box2);
             assert(box1 != box3);
 
-            for (std::size_t i{}; i < 3; ++i) {
+            for (std::size_t i{}; i < 2; ++i) {
                 std::cout << box3[i] << ' ';
             }
             std::cout << std::endl;

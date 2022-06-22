@@ -1,14 +1,16 @@
 // 3.3 Querying Devices
-#include <stdio.h>
+#include <cstdio>
 
 #include "common.h"
+
+using namespace std;
 
 // Parameters of devices, see more in "CUDA Programming Guide".
 int main(int argc, char **argv) {
 
     printf("%s starting...\n", argv[0]);
 
-    // find cuda device
+    // Find cuda device.
     int deviceCount = 0;
     cudaError_t error_id = cudaGetDeviceCount(&deviceCount);
     if (error_id != cudaSuccess) {
@@ -30,7 +32,7 @@ int main(int argc, char **argv) {
     cudaGetDeviceProperties(&deviceProp, dev);
     printf("Device %d: \"%s\".\n", dev, deviceProp.name);
 
-    // find driver
+    // Find driver.
     cudaDriverGetVersion(&driverVersion);
     cudaRuntimeGetVersion(&runtimeVersion);
     printf(

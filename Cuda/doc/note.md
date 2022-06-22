@@ -27,7 +27,7 @@ This raises a subtle but important point. Much of the simplicity and power of CU
 但是请注意：您启动的 block 的任何维度都不能超过 65,535。这只是硬件强加的限制，因此如果您尝试使用比这更多的 block 启动，您将开始看到失败。
 Be warned, though: No dimension of your launch of blocks may exceed 65,535. This is simply a hardware-imposed limit, so you will start to see failures if you attempt launches with more blocks than this. 
 
-块中的线程数不能超过设备属性的 `maxThreadsPerBlock` 字段指定的值。
+块中的 thread 数不能超过设备属性的 `maxThreadsPerBlock` 字段指定的值。
 The number of threads in a block cannot exceed the value specified by the `maxThreadsPerBlock` field of the device properties.
 
 ```c
@@ -39,5 +39,21 @@ Maximum sizes of each dimension of a grid: 2147483647 x 65535 x 65535
 
 ## Chapter 5 Thread Cooperation
 
+### 5.3 Shared Memory and Synchronization
+
+CUDA C 编译器处理共享内存中的变量与一般变量不同。它为 GPU 上启动的每个 block 创建变量的副本。该 block 中的每个 thread 共享内存，但 thread 无法看到或修改在其他 block 中看到的此变量的副本。
+The CUDA C compiler treats variables in shared memory differently than typical variables. It creates a copy of the variable for each block that you launch on the GPU. Every thread in that block shares the memory, but threads cannot see or modify the copy of this variable that is seen within other blocks.
+
+这提供了一种 block 内的 thread 在计算上进行通信和协作极好的方法。
+This provides an excellent means by which threads within a block can communicate and collaborate on computations.
+
+此外，共享内存缓冲区物理上驻留在 GPU 上，而不是驻留在片外 DRAM 中。正因为如此，访问共享内存的延迟往往远低于典型的缓冲区，这使得共享内存可以有效地作为每个块、软件管理的缓存或暂存器。
+Furthermore, shared memory buffers reside physically on the GPU as opposed to residing in off-chip DRAM. Because of this, the latency to access shared memory tends to be far lower than typical buffers, making shared memory effective as a per-block, softwaremanaged cache or scratchpad.
+
+由于编译器将为每个 block 创建共享变量的副本，因此我们只需要分配足够的内存，以便块中的每个 thread 都有一个对应位置。
+Since the compiler will create a copy of the shared variables for each block, we need to allocate only enough memory such that each thread in the block has an entry.
+
+我们需要一种方法来保证在任何人尝试从该缓冲区读取之前，完成所有这些对共享数组的写入。
+We need a method to guarantee that all of these writes to the shared array complete before anyone tries to read from this buffer.
 
 

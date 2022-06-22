@@ -28,4 +28,4 @@ include_directories(include)
 
 aux_source_directory(src SOURCE_DIR)
 
-add_executable(main ${SOURCE_DIR} "include/volume.hpp")
+add_executable(main ${SOURCE_DIR})

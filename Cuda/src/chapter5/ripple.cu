@@ -1,8 +1,7 @@
 // 5.2.2 GPU Ripple Using Threads
 #include <vector>
 #include <cmath>
-
-#include <stdio.h>
+#include <cstdio>
 
 #include "common.h"
 #define STB_IMAGE_WRITE_IMPLEMENTATION
@@ -36,10 +35,10 @@ __global__ void kernel(uint8_t *ptr, int tick, int x_dim, int y_dim) {
 
 int main(int argc, char **argv) {
     if (argc != 2) {
-        printf("Output path invalid.\n");
+        std::printf("Output path invalid.\n");
         return EXIT_FAILURE;
     }
-    printf("Output path: %s\n", argv[1]);
+    std::printf("Output path: %s\n", argv[1]);
 
     std::vector<uint8_t> bitmap(DIM * DIM * 4);
     uint8_t *dev_bitmap;
@@ -53,10 +52,10 @@ int main(int argc, char **argv) {
 
         HANDLE_ERROR(cudaMemcpy(bitmap.data(), dev_bitmap, bitmap.size() * sizeof(uint8_t), cudaMemcpyDeviceToHost));
         char path[256];
-        sprintf(path, "%s/%d.png", argv[1], tick);
+        std::sprintf(path, "%s/%d.png", argv[1], tick);
         stbi_flip_vertically_on_write(1);
         stbi_write_png(path, DIM, DIM, 4, bitmap.data(), 0);
-        printf("%s output successfully!\n", path);
+        std::printf("%s output successfully!\n", path);
     }
     HANDLE_ERROR(cudaFree(dev_bitmap));
     return 0;

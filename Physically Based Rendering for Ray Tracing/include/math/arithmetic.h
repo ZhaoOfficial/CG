@@ -2,6 +2,7 @@
 #define _PBRT_DEFINE_H_
 
 #include <array>
+#include <bit>
 #include <limits>
 #include <type_traits>
 
@@ -60,17 +61,20 @@ struct FloatingPoint {
     static constexpr FloatingPointBitsType<Number> getSignificand(Number number) {
         // For `float`, `digits` is 24.
         // For `double`, `digits` is 53.
-        using FPBT = FloatingPointBitsType<Number>;
-        return toBits(number) bitand ((FPBT(1) << (std::numeric_limits<Number>::digits - 1)) - 1);
+        return toBits(number) bitand ((FPBT<Number>(1) << (std::numeric_limits<Number>::digits - 1)) - 1);
     }
 };
 
 //* About angular.
 // Convert from degree form to radius form
-constexpr Float deg2rad(Float degree);
+constexpr Float deg2rad(Float degree) {
+    return degree * FRAC_PI_180;
+}
 
 // Convert from radius form to degree form
-constexpr Float rad2deg(Float radius);
+constexpr Float rad2deg(Float radius) {
+    return radius * FRAC_180_PI;
+}
 
 //* Useful arithmetic operations.
 // return ad - bc

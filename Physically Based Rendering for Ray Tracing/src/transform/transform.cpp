@@ -1,3 +1,5 @@
+#include <cmath>
+
 #include "transform/transform.h"
 
 PBRT_NAMESPACE_START

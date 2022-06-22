@@ -1,5 +1,5 @@
 // 4.2.1 summing Vectors
-#include <stdio.h>
+#include <cstdio>
 
 #include "common.h"
 
@@ -16,29 +16,29 @@ int main() {
     int a[N], b[N], c[N];
     int *dev_a, *dev_b, *dev_c;
     
-    // allocate memory on the GPU
+    // Allocate memory on the GPU.
     HANDLE_ERROR(cudaMalloc((void**)&dev_a, sizeof(int) * N));
     HANDLE_ERROR(cudaMalloc((void**)&dev_b, sizeof(int) * N));
     HANDLE_ERROR(cudaMalloc((void**)&dev_c, sizeof(int) * N));
 
-    // fill the arrays `a` and `b` on the CPU;
+    // Fill the arrays `a` and `b` on the CPU.
     for (int i{}; i < N; ++i) {
         a[i] = -i;
         b[i] = i * i;
     }
 
-    // copy the arrays `a` and `b` to the GPU
+    // Copy the arrays `a` and `b` to the GPU.
     HANDLE_ERROR(cudaMemcpy(dev_a, a, sizeof(int) * N, cudaMemcpyHostToDevice));
     HANDLE_ERROR(cudaMemcpy(dev_b, b, sizeof(int) * N, cudaMemcpyHostToDevice));
 
     addKernel<<<1, N>>>(dev_a, dev_b, dev_c);
 
-    // copy the array `c` back from the GPU to the CPU
+    // Copy the array `c` back from the GPU to the CPU.
     HANDLE_ERROR(cudaMemcpy(c, dev_c, sizeof(int) * N, cudaMemcpyDeviceToHost));
 
-    // display the results
+    // Display the results.
     for (int i{}; i < N; ++i) {
-        printf("%d + %d = %d\n", a[i], b[i], c[i]);
+        std::printf("%d + %d = %d\n", a[i], b[i], c[i]);
     }
 
     cudaFree(dev_a);

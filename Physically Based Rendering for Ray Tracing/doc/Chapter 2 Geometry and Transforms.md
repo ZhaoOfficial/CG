@@ -92,6 +92,11 @@ $$
 
 ### 2.7.5 $x$, $y$, and $z$ Axis Rotations
 
+```c++
+/*inline*/ constexpr float deg2rad(float degree) { ... }
+```
+
+从 `c++11` 起，`constexpr` 声明的函数是隐式的 `inline` 函数，因此不能将声明和定义分离。详见 [inline](https://en.cppreference.com/w/cpp/language/inline).
 $$
 \begin{gather*}
 R_{x}(\theta)=

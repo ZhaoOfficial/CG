@@ -2,6 +2,7 @@
 #define _PBRT_TUPLE3_H_
 
 #include <cassert>
+#include <cmath>
 #include <type_traits>
 
 #include "math/arithmetic.h"
