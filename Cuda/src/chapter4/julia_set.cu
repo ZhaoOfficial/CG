@@ -1,7 +1,8 @@
 // 4.2.2 A Fun Example
-#include <vector>
 #include <cmath>
 #include <cstdio>
+#include <filesystem>
+#include <vector>
 
 #include "common.h"
 #define STB_IMAGE_WRITE_IMPLEMENTATION
@@ -71,6 +72,11 @@ __global__ void kernel(uint8_t *ptr, int x_dim, int y_dim) {
 int main(int argc, char **argv) {
     if (argc != 2) {
         std::printf("Output path invalid.\n");
+        return EXIT_FAILURE;
+    }
+    std::filesystem::path file_path(argv[1]);
+    if (file_path.extension() != ".png") {
+        std::printf("Output path [%s] invalid.\n", file_path.string().c_str());
         return EXIT_FAILURE;
     }
     std::printf("Output path: %s\n", argv[1]);

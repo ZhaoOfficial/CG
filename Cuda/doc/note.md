@@ -56,4 +56,14 @@ Since the compiler will create a copy of the shared variables for each block, we
 我们需要一种方法来保证在任何人尝试从该缓冲区读取之前，完成所有这些对共享数组的写入。
 We need a method to guarantee that all of these writes to the shared array complete before anyone tries to read from this buffer.
 
+#### 5.3.1 Dot Product
 
+CUDA 架构保证在块中的每个线程都执行了 `__syncthreads()` 之前，没有线程会前进到超出 `__syncthreads()` 的指令。不幸的是，如果 `__syncthreads()` 位于不同的分支中，一些线程将永远无法到达 `__syncthreads()`。因此，由于保证在每个线程执行完之前不能执行 `__syncthreads()` 之后的指令，硬件只是继续等待这些线程，等待，等待...
+The CUDA Architecture guarantees that no thread will advance to an instruction beyond the `__syncthreads()` until every thread in the block has executed the `__syncthreads()`. Unfortunately, if the `__syncthreads()` sits in a divergent branch, some of the threads will never reach the `__syncthreads()`. Therefore, because of the guarantee that no instruction after a `__syncthreads()` can be executed before every thread has executed it, the hardware simply continues to wait for these threads. And waits. And waits. Forever.
+
+#### 5.3.2 Shared Memory Bitmap
+
+在任何线程通信之前进行同步。
+Synchronization before any thread communication.
+
+## Chapter 6 Constant Memory and Events

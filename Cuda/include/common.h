@@ -20,4 +20,7 @@ static void handleError(cudaError_t err, char const *file, int line) {
     }                                                                        \
 } while (0)
 
+template <typename T>
+constexpr T pi = T(3.1415926535897932);
+
 #endif // !_COMMON_H_

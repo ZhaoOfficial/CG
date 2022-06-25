@@ -1,3 +1,4 @@
+// 5.3.1 Dot Product
 #include <algorithm>
 #include <cstdio>
 #include <numeric>
@@ -23,14 +24,15 @@ __global__ void dotProduct(int const N, float const* a, float const* b, float *c
 
     // Reduction process, reduce the result as one.
     // This requires blockDim.x to be power of 2.
-    for (int i = blockDim.x / 2; i != 0; i /= 2) {
+    for (int i = blockDim.x / 2; i != 16; i /= 2) {
         if (cache_index < i) {
             cache[cache_index] += cache[cache_index + i];
         }
+        //? Why `__syncthreads()` here?
+        // It is because of SIMD. Detailedly, if there is a ` __syncthreads()` in the branch,
+        // then all the thread in block will wait forever and core dump.
+        //! Actually, I tried and nothing happened. Maybe the book is too old~
         __syncthreads();
-    }
-    if (cache_index == 0) {
-        c[blockIdx.x] = cache[0];
     }
     // Warp reduce
     if (threadIdx.x < 32) {
@@ -79,6 +81,7 @@ int main(int argc, char **argv) {
     std::printf("Result = %f\n", result);
     auto sumOfSquare = [](float x) -> float { return x * (x + 1) * (2 * x + 1) / 6; };
     std::printf("Expected result = %f\n", sumOfSquare(ArraySize - 1) * 2.0f);
+    std::printf("The difference comes from the floating point error.\n");
 
     delete[] a;
     delete[] b;

@@ -1,6 +1,5 @@
 list(APPEND PBRT_LIBARAIES
     geometry
-    math
     transform
 )
     
