@@ -16,6 +16,6 @@ int main() {
     HANDLE_ERROR(cudaMemcpy(&c, dev_c, sizeof(int), cudaMemcpyDeviceToHost));
     std::printf("2 + 7 = %d\n", c);
 
-    cudaFree(dev_c);
+    HANDLE_ERROR(cudaFree(dev_c));
     return 0;
 }

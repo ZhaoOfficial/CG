@@ -67,3 +67,42 @@ The CUDA Architecture guarantees that no thread will advance to an instruction b
 Synchronization before any thread communication.
 
 ## Chapter 6 Constant Memory and Events
+
+### 6.2 Constant Memory
+
+#### 6.2.4 Performance with Constant Memory
+
+将内存声明为 `__constant__` 将我们的使用限制为只读。
+Declaring memory as `__constant__` constrains our usage to be read-only.
+
+正如我们之前提到的，与从全局内存中读取相同数据相比，从常量内存中读取可以节省内存带宽。从 64KB 的常量内存中读取可以比全局内存的标准读取节省带宽的原因有两个：
+As we previously mentioned, reading from constant memory can conserve memory bandwidth when compared to reading the same data from global memory. There are two reasons why reading from the 64KB of constant memory can save bandwidth over standard reads of global memory:
+
+1. 从常量内存中的单次读取可以广播到其他“附近”线程，有效节省多达 15 次读取。
+A single read from constant memory can be broadcast to other "nearby" threads, effectively saving up to 15 reads.
+2. 常量内存被缓存，因此连续读取同一地址不会产生任何额外的内存流量。
+Constant memory is cached, so consecutive reads of the same address will not incur any additional memory traffic.
+
+在编织的世界中，经线是指被编织成织物的一组线。在 CUDA 架构中，warp 指的是 32 个线程的集合，这些线程“编织在一起”并以同步方式执行。在程序的每一行，warp 中的每个线程对不同的数据执行相同的指令。
+In the world of weaving, a warp refers to the group of threads being woven together into fabric. In the CUDA Architecture, a warp refers to a collection of 32 threads that are "woven together" and get executed in lockstep. At every line in your program, each thread in a warp executes the same instruction on different data.
+
+在处理常量内存时，NVIDIA 硬件可以将单个内存读取广播到每个半捆线程。如果半捆中的每个线程都从常量内存中的同一地址请求数据，那么您的 GPU 将只生成一个读取请求，然后将数据广播到每个线程。
+When it comes to handling constant memory, NVIDIA hardware can broadcast a single memory read to each half-warp. If every thread in a half-warp requests data from the same address in constant memory, your GPU will generate only a single read request and subsequently broadcast the data to every thread.
+
+在从常量内存中的地址第一次读取之后，其他半捆请求相同地址，因此命中常量缓存，将不会产生额外的内存流量。
+After the first read from an address in constant memory, other half-warps requesting the same address, and therefore hitting the constant cache, will generate no additional memory traffic.
+
+虽然当所有 16 个线程都读取相同的地址时它可以显着提高性能，但当所有 16 个线程读取不同的地址时，它实际上会降低性能。
+Although it can dramatically accelerate performance when all 16 threads are reading the same address, it actually slows performance to a crawl when all 16 threads read different addresses.
+
+### 6.3 Measuring Performance with Events
+
+使用事件最棘手的部分是由于我们在 CUDA C 中进行的一些调用实际上是异步的。
+The trickiest part of using events arises as a consequence of the fact that some of the calls we make in CUDA C are actually asynchronous.
+
+当 `cudaEventSynchronize()` 的调用返回时，我们知道在 `stop` 事件之前所有 GPU 工作都完成了，因此可以安全地读取 `stop` 中记录的时间戳。
+When the call to `cudaEventSynchronize()` returns, we know that all GPU work before the `stop` event has completed, so it is safe to read the time stamp recorded in `stop`.
+
+It is worth noting that because CUDA events get implemented directly on the GPU, they are unsuitable for timing mixtures of device and host code. That is, you will get unreliable results if you attempt to use CUDA events to time more than kernel executions and memory copies involving the device.
+
+## Chapter 7 Texture Memory

@@ -10,8 +10,8 @@ constexpr int ThreadsPerBlock{256};
 __global__ void dotProduct(int const N, float const* a, float const* b, float *c) {
     __shared__ float cache[ThreadsPerBlock];
 
-    int tid = threadIdx.x + blockIdx.x * blockDim.x;
-    int cache_index = threadIdx.x;
+    unsigned int tid = threadIdx.x + blockIdx.x * blockDim.x;
+    unsigned int cache_index = threadIdx.x;
 
     float result{};
     for (; tid < N; tid += blockDim.x * gridDim.x) {
@@ -86,5 +86,8 @@ int main(int argc, char **argv) {
     delete[] a;
     delete[] b;
     delete[] c;
+    HANDLE_ERROR(cudaFree(dev_a));
+    HANDLE_ERROR(cudaFree(dev_b));
+    HANDLE_ERROR(cudaFree(dev_c));
     return 0;
 }

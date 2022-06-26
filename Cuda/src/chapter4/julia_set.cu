@@ -1,5 +1,6 @@
 // 4.2.2 A Fun Example
 #include <cmath>
+#include <cstdint>
 #include <cstdio>
 #include <filesystem>
 #include <vector>
@@ -59,7 +60,7 @@ template <typename T = float>
 __global__ void kernel(uint8_t *ptr, int x_dim, int y_dim) {
     for (unsigned int y = blockIdx.y * blockDim.y + threadIdx.y; y < y_dim; y += gridDim.y * blockDim.y) {
         for (unsigned int x = blockIdx.x * blockDim.x + threadIdx.x; x < x_dim; x += gridDim.x * blockDim.x) {
-            int pixel_id = (x + y * x_dim) * 4;
+            unsigned int pixel_id = (x + y * x_dim) * 4;
             uint8_t value = julia<T>(x, y);
             ptr[pixel_id + 0] = value;
             ptr[pixel_id + 1] = value;
@@ -95,6 +96,7 @@ int main(int argc, char **argv) {
     stbi_flip_vertically_on_write(1);
     stbi_write_png(argv[1], DIM, DIM, 4, bitmap.data(), 0);
     std::printf("Image output successfully!\n");
+
     HANDLE_ERROR(cudaFree(dev_bitmap));
     return 0;
 }

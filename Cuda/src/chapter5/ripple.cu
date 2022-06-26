@@ -1,5 +1,6 @@
 // 5.2.2 GPU Ripple Using Threads
 #include <cmath>
+#include <cstdint>
 #include <cstdio>
 #include <filesystem>
 #include <string>
@@ -15,7 +16,7 @@ template <typename T = float>
 __global__ void kernel(uint8_t *ptr, int tick, unsigned int x_dim, unsigned int y_dim) {
     for (unsigned int y = blockIdx.y * blockDim.y + threadIdx.y; y < y_dim; y += gridDim.y * blockDim.y) {
         for (unsigned int x = blockIdx.x * blockDim.x + threadIdx.x; x < x_dim; x += gridDim.x * blockDim.x) {
-            int pixel_id = (x + y * x_dim) * 4;
+            unsigned int pixel_id = (x + y * x_dim) * 4;
             int rx = x - x_dim / 2;
             int ry = y - y_dim / 2;
             T r = std::sqrt(T(rx * rx + ry * ry));

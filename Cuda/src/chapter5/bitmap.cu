@@ -1,5 +1,6 @@
 // 5.3.2 shared memory bitmap
 #include <cmath>
+#include <cstdint>
 #include <cstdio>
 #include <filesystem>
 #include <string>
@@ -19,7 +20,7 @@ __global__ void kernel(uint8_t *ptr, unsigned int x_dim, unsigned int y_dim) {
 
     for (unsigned int y = blockIdx.y * blockDim.y + threadIdx.y; y < y_dim; y += gridDim.y * blockDim.y) {
         for (unsigned int x = blockIdx.x * blockDim.x + threadIdx.x; x < x_dim; x += gridDim.x * blockDim.x) {
-            int pixel_id = (x + y * x_dim) * 4;
+            unsigned int pixel_id = (x + y * x_dim) * 4;
 
             cache[threadIdx.x][threadIdx.y] = T(255.0 / 4.0) * (
                 std::sin(x * T(2.0) * pi<T> / period) + T(1.0)
@@ -64,6 +65,8 @@ int main(int argc, char **argv) {
     stbi_flip_vertically_on_write(1);
     stbi_write_png(file_path.string().c_str(), DIM, DIM, 4, bitmap.data(), 0);
     std::printf("%s output successfully!\n", file_path.string().c_str());
+
+    HANDLE_ERROR(cudaFree(dev_bitmap));
     return 0;
 }
 
