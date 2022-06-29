@@ -1,6 +1,5 @@
 // 4.2.2 A Fun Example
 #include <cmath>
-#include <cstdint>
 #include <cstdio>
 #include <filesystem>
 #include <vector>

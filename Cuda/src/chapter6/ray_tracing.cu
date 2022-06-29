@@ -1,6 +1,5 @@
 // 6.3 Constant Memory
 #include <cmath>
-#include <cstdint>
 #include <cstdio>
 #include <filesystem>
 #include <random>
@@ -84,7 +83,7 @@ int main(int argc, char **argv) {
     Sphere *s = new Sphere[NUM_SPHERE];
 
     std::random_device rd;
-    // std::mt19937_64 rng(rd{});
+    // std::mt19937_64 rng(rd());
     std::mt19937_64 rng(0);
     std::uniform_real_distribution<float> color(0.0f, 1.0f);
     std::uniform_real_distribution<float> position(-800.0f, 800.0f);
@@ -116,6 +115,7 @@ int main(int argc, char **argv) {
 
     float elapsed_time_ms;
     HANDLE_ERROR(cudaEventElapsedTime(&elapsed_time_ms, start, stop));
+    // 5~6 ms
     std::printf("Time to generate figure: %.3f ms\n", elapsed_time_ms);
 
     stbi_flip_vertically_on_write(1);

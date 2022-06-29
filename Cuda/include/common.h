@@ -2,6 +2,8 @@
 #define _COMMON_H_
 
 #include <cstdio>
+#include <cstddef>
+#include <cstdint>
 #include <cstdlib>
 #include <limits>
 

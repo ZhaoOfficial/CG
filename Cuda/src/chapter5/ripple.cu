@@ -1,6 +1,5 @@
 // 5.2.2 GPU Ripple Using Threads
 #include <cmath>
-#include <cstdint>
 #include <cstdio>
 #include <filesystem>
 #include <string>
@@ -53,7 +52,7 @@ int main(int argc, char **argv) {
 
     dim3 block_size(16, 16);
     dim3 grid_size(32, 32);
-    for (int tick{}; tick < 20; ++tick) {
+    for (int tick{}; tick < 40; ++tick) {
         kernel<float><<<grid_size, block_size>>>(dev_bitmap, tick, DIM, DIM);
 
         HANDLE_ERROR(cudaMemcpy(bitmap.data(), dev_bitmap, bitmap.size() * sizeof(uint8_t), cudaMemcpyDeviceToHost));

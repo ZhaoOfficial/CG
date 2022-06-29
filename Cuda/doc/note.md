@@ -106,3 +106,12 @@ When the call to `cudaEventSynchronize()` returns, we know that all GPU work bef
 It is worth noting that because CUDA events get implemented directly on the GPU, they are unsuitable for timing mixtures of device and host code. That is, you will get unreliable results if you attempt to use CUDA events to time more than kernel executions and memory copies involving the device.
 
 ## Chapter 7 Texture Memory
+
+### 7.2 Texture Memory Overview
+
+纹理缓存专为内存访问模式表现出大量空间局部性的图形应用程序而设计。在计算应用程序中，这大致意味着一个线程可能从一个地址“接近”附近线程读取的地址读取。
+Texture caches are designed for graphics applications where memory access patterns exhibit a great deal of spatial locality. In a computing application, this roughly implies that a thread is likely to read from an address “near” the address that nearby threads read.
+
+### 7.3 Simulating Heat Transfer
+
+
