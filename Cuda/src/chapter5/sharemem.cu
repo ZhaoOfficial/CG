@@ -10,8 +10,8 @@ constexpr int ThreadsPerBlock{256};
 __global__ void dotProduct(int const N, float const* a, float const* b, float *c) {
     __shared__ float cache[ThreadsPerBlock];
 
-    unsigned int tid = threadIdx.x + blockIdx.x * blockDim.x;
-    unsigned int cache_index = threadIdx.x;
+    int tid = threadIdx.x + blockIdx.x * blockDim.x;
+    int cache_index = threadIdx.x;
 
     float result{};
     for (; tid < N; tid += blockDim.x * gridDim.x) {

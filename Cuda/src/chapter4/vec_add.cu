@@ -1,6 +1,4 @@
 // 4.2.1 summing Vectors
-#include <cstdio>
-
 #include "common.h"
 
 constexpr int N = 10;

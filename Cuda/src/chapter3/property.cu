@@ -1,6 +1,4 @@
 // 3.3 Querying Devices
-#include <cstdio>
-
 #include "common.h"
 
 using namespace std;

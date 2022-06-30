@@ -1,6 +1,4 @@
 // 3.4 Using Device Properties
-#include <cstdio>
-
 #include "common.h"
 
 int main() {

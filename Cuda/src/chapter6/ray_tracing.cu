@@ -1,15 +1,10 @@
 // 6.3 Constant Memory
 #include <cmath>
-#include <cstdio>
-#include <filesystem>
 #include <random>
-#include <vector>
 
 #include "common.h"
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb_image_write.h"
 
-constexpr int DIM = 2048;
+constexpr int DIM = 4096;
 constexpr int NUM_SPHERE = 30;
 
 struct Sphere {
@@ -32,10 +27,10 @@ struct Sphere {
 
 __constant__ Sphere dev_s[NUM_SPHERE];
 
-__global__ void kernel(uint8_t* ptr, unsigned int x_dim, unsigned int y_dim) {
-    unsigned int x = threadIdx.x + blockDim.x * blockIdx.x;
-    unsigned int y = threadIdx.y + blockDim.y * blockIdx.y;
-    unsigned int pixel_id = (x + y * x_dim) * 4;
+__global__ void kernel(uint8_t* ptr, int x_dim, int y_dim) {
+    int x = threadIdx.x + blockDim.x * blockIdx.x;
+    int y = threadIdx.y + blockDim.y * blockIdx.y;
+    int pixel_id = (x + y * x_dim) * 4;
 
     float ox = ((float)x - (float)x_dim / 2);
     float oy = ((float)y - (float)y_dim / 2);
@@ -61,36 +56,23 @@ __global__ void kernel(uint8_t* ptr, unsigned int x_dim, unsigned int y_dim) {
 }
 
 int main(int argc, char **argv) {
-    if (argc != 2) {
-        std::printf("Output path invalid.\n");
-        return EXIT_FAILURE;
-    }
-    std::filesystem::path file_path(argv[1]);
-    if (file_path.extension() != ".png") {
-        std::printf("Output path [%s] invalid.\n", file_path.string().c_str());
-        return EXIT_FAILURE;
-    }
-    std::printf("Output path: %s\n", argv[1]);
+    PathChecker::checkFilePath(argc, argv, ".png");
+    Bitmap bitmap(DIM, DIM);
 
     // Startup
+    std::random_device rd;
+    // std::mt19937_64 rng(rd());
+    std::mt19937_64 rng(0);
+    std::uniform_real_distribution<float> color(0.0f, 1.0f);
+    std::uniform_real_distribution<float> position(-1600.0f, 1600.0f);
+    std::uniform_real_distribution<float> radius(100.0f, 300.0f);
+
     cudaEvent_t start, stop;
     HANDLE_ERROR(cudaEventCreate(&start));
     HANDLE_ERROR(cudaEventCreate(&stop));
     HANDLE_ERROR(cudaEventRecord(start, 0));
 
-    std::vector<uint8_t> bitmap(DIM * DIM * 4);
-    uint8_t *dev_bitmap;
     Sphere *s = new Sphere[NUM_SPHERE];
-
-    std::random_device rd;
-    // std::mt19937_64 rng(rd());
-    std::mt19937_64 rng(0);
-    std::uniform_real_distribution<float> color(0.0f, 1.0f);
-    std::uniform_real_distribution<float> position(-800.0f, 800.0f);
-    std::uniform_real_distribution<float> radius(50.0f, 150.0f);
-
-    HANDLE_ERROR(cudaMalloc((void**)&dev_bitmap, bitmap.size()));
-    HANDLE_ERROR(cudaMalloc((void**)&dev_s, sizeof(Sphere) * NUM_SPHERE));
 
     for (std::size_t i{}; i < NUM_SPHERE; ++i) {
         s[i].r = color(rng);
@@ -107,9 +89,9 @@ int main(int argc, char **argv) {
     // Rendering
     dim3 block_size(16, 16);
     dim3 grid_size(DIM / 16, DIM / 16);
-    kernel<<<grid_size, block_size>>>(dev_bitmap, DIM, DIM);
+    kernel<<<grid_size, block_size>>>(bitmap.dev_bitmap, DIM, DIM);
 
-    HANDLE_ERROR(cudaMemcpy(bitmap.data(), dev_bitmap, bitmap.size(), cudaMemcpyDeviceToHost));
+    bitmap.memcpyDeviceToHost();
     HANDLE_ERROR(cudaEventRecord(stop, 0));
     HANDLE_ERROR(cudaEventSynchronize(stop));
 
@@ -117,13 +99,9 @@ int main(int argc, char **argv) {
     HANDLE_ERROR(cudaEventElapsedTime(&elapsed_time_ms, start, stop));
     // 5~6 ms
     std::printf("Time to generate figure: %.3f ms\n", elapsed_time_ms);
-
-    stbi_flip_vertically_on_write(1);
-    stbi_write_png(file_path.string().c_str(), DIM, DIM, 4, bitmap.data(), 0);
-    std::printf("%s output successfully!\n", file_path.string().c_str());
+    bitmap.toImage(argv[1]);
 
     delete[] s;
-    HANDLE_ERROR(cudaFree(dev_bitmap));
     HANDLE_ERROR(cudaEventDestroy(start));
     HANDLE_ERROR(cudaEventDestroy(stop));
     return 0;

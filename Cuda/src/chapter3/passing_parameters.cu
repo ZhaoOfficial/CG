@@ -1,6 +1,4 @@
 // 3.2.3 Passing Parameters
-#include <cstdio>
-
 #include "common.h"
 
 __global__ void addKernel(int a, int b, int *c) {
