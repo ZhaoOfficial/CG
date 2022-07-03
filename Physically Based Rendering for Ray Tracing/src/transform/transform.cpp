@@ -30,6 +30,7 @@ std::ostream& operator<<(std::ostream& out, Transform const& rhs) {
     out << rhs.mat;
     return out;
 }
+
 // Auxiliary functions
 Transform Transform::inverse() const { return Transform{this->inv_mat, this->mat}; }
 Transform Transform::transpose() const { return Transform{this->mat.transpose(), this->inv_mat.transpose()}; }

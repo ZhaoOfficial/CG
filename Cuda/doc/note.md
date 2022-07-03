@@ -114,4 +114,7 @@ Texture caches are designed for graphics applications where memory access patter
 
 ### 7.3 Simulating Heat Transfer
 
+#### 7.3.4 Using Texture Memory
 
+**Deprecated** 尽管它看起来像一个函数，但 `tex1Dfetch()` 是一个编译器内在函数。而且由于纹理引用必须在文件范围内全局声明，我们不能再将输入和输出缓冲区作为参数传递给 `blend_kernel()`，因为编译器需要在编译时知道哪些纹理应该用 `tex1Dfetch()` 采样。
+**Deprecated** Although it looks like a function, `tex1Dfetch()` is a compiler intrinsic. And since texture references must be declared globally at file scope, we can no longer pass the input and output buffers as parameters to `blend_kernel()` because the compiler needs to know at compile time which textures `tex1Dfetch()` should be sampling.

@@ -58,6 +58,7 @@ __global__ void kernel(uint8_t* ptr, int x_dim, int y_dim) {
 int main(int argc, char **argv) {
     PathChecker::checkFilePath(argc, argv, ".png");
     Bitmap bitmap(DIM, DIM);
+    Timer timer;
 
     // Startup
     std::random_device rd;
@@ -67,11 +68,7 @@ int main(int argc, char **argv) {
     std::uniform_real_distribution<float> position(-1600.0f, 1600.0f);
     std::uniform_real_distribution<float> radius(100.0f, 300.0f);
 
-    cudaEvent_t start, stop;
-    HANDLE_ERROR(cudaEventCreate(&start));
-    HANDLE_ERROR(cudaEventCreate(&stop));
-    HANDLE_ERROR(cudaEventRecord(start, 0));
-
+    timer.startTimer();
     Sphere *s = new Sphere[NUM_SPHERE];
 
     for (std::size_t i{}; i < NUM_SPHERE; ++i) {
@@ -92,17 +89,12 @@ int main(int argc, char **argv) {
     kernel<<<grid_size, block_size>>>(bitmap.dev_bitmap, DIM, DIM);
 
     bitmap.memcpyDeviceToHost();
-    HANDLE_ERROR(cudaEventRecord(stop, 0));
-    HANDLE_ERROR(cudaEventSynchronize(stop));
+    timer.stopTimer();
 
-    float elapsed_time_ms;
-    HANDLE_ERROR(cudaEventElapsedTime(&elapsed_time_ms, start, stop));
     // 5~6 ms
-    std::printf("Time to generate figure: %.3f ms\n", elapsed_time_ms);
+    std::printf("Time to generate figure: %.3f ms\n", timer.readTimer());
     bitmap.toImage(argv[1]);
 
     delete[] s;
-    HANDLE_ERROR(cudaEventDestroy(start));
-    HANDLE_ERROR(cudaEventDestroy(stop));
     return 0;
 }

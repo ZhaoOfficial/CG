@@ -32,6 +32,12 @@ static inline void handleError(cudaError_t err, char const *file, int line) {
     }                                                                             \
 } while (0)
 
+__device__ uint8_t value(float n1, float n2, int hue);
+
+__global__ void floatToUint8(
+    uint8_t *bitmap, float const *src, int x_dim, int y_dim
+);
+
 class PathChecker {
 public:
     PathChecker() = delete;
@@ -61,6 +67,19 @@ public:
     std::size_t x_dim, y_dim;
     std::vector<uint8_t> bitmap;
     uint8_t* dev_bitmap;
+};
+
+class Timer {
+public:
+    Timer();
+    ~Timer();
+
+    void startTimer();
+    void stopTimer();
+    float readTimer();
+
+public:
+    cudaEvent_t start, stop;
 };
 
 #endif // !_COMMON_H_

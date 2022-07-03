@@ -3,6 +3,7 @@
 
 #include <array>
 #include <bit>
+#include <cmath>
 #include <limits>
 #include <type_traits>
 
@@ -74,6 +75,15 @@ constexpr Float deg2rad(Float degree) {
 // Convert from radius form to degree form
 constexpr Float rad2deg(Float radius) {
     return radius * FRAC_180_PI;
+}
+
+// sin(x) / x
+constexpr Float sinc(Float x) {
+    // lim_{x\to0}\sin{x}/x = 1
+    if (x * x + Float(1) == Float(1)) {
+        return Float(1);
+    }
+    return std::sin(x) / x;
 }
 
 //* Useful arithmetic operations.

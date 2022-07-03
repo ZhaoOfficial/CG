@@ -1,7 +1,9 @@
 #ifndef _PBRT_DEBUG_H_
 #define _PBRT_DEBUG_H_
 
+#include <cassert>
 #include <iomanip>
+#include <iostream>
 
 #include "common.h"
 

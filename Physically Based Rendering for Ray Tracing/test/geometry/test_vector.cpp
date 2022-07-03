@@ -32,7 +32,6 @@ int main(int argc, char **argv) {
             vec2_2 = vec2_3;
             debugOutput(vec2_2);
             assert(vec2_3.x == Float(1) and vec2_3.y == Float(2));
-
         }
         std::cout << "3. Operator overloading\n";
         {
@@ -125,7 +124,6 @@ int main(int argc, char **argv) {
             vec3_2 = vec3_3;
             debugOutput(vec3_2);
             assert(vec3_3.x == Float(1) and vec3_3.y == Float(2) and vec3_3.z == Float(3));
-
         }
         std::cout << "3. Operator overloading\n";
         {
