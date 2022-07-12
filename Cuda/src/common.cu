@@ -23,8 +23,8 @@ __device__ uint8_t value(float n1, float n2, int hue) {
 __global__ void floatToUint8(
     uint8_t *bitmap, float const *src, int x_dim, int y_dim
 ) {
-    int x = threadIdx.x + blockIdx.x * blockDim.x;
-    int y = threadIdx.y + blockIdx.y * blockDim.y;
+    int x = threadIdx.x + blockDim.x * blockIdx.x;
+    int y = threadIdx.y + blockDim.y * blockIdx.y;
     int coord = x + y * x_dim;
 
     float c = src[coord];

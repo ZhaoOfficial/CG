@@ -13,6 +13,17 @@ int main(int argc, char **argv) {
         }
         std::cout << "2. Constructor and destructor\n";
         {
+            Quaternion q1;
+            // Quaternion q2{};
+            debugOutput(q1);
+            assert((q1.w == Vector3f{0, 0, 0}));
+            assert(q1.u == 1);
         }
+        std::cout << "3. Operator overloading\n";
+        {}
+        std::cout << "4. Auxiliary functions\n";
+        {}
+        std::cout << "5. External functions\n";
+        {}
     }
 }
