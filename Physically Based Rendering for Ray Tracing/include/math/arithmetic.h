@@ -79,9 +79,9 @@ constexpr Float rad2deg(Float radius) {
 
 // sin(x) / x
 constexpr Float sinc(Float x) {
-    // lim_{x\to0}\sin{x}/x = 1
-    if (x * x + Float(1) == Float(1)) {
-        return Float(1);
+    // lim_{x->0}\sin{x}/x = 1
+    if (x * x + Float{1} == Float{1}) {
+        return Float{1};
     }
     return std::sin(x) / x;
 }

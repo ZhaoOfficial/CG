@@ -50,7 +50,7 @@ public:
         return *this;
     }
     SquareMatrix& operator/=(Float num) {
-        Float inv_num = Float(1) / num;
+        Float inv_num = Float{1} / num;
         return this->operator*=(inv_num);
     }
     friend SquareMatrix operator+(SquareMatrix const& lhs, SquareMatrix const& rhs) {
@@ -127,17 +127,17 @@ public:
     bool isIdentity() const {
         // (N - 1) of (1, 0, 0, ...) pattern with (N) (0)s.
         for (std::size_t i = 0; i < N - 1; ++i) {
-            if (data_1d[i * N + i] != Float(1)) {
+            if (data_1d[i * N + i] != Float{1}) {
                 return false;
             }
             for (std::size_t j = 1; j <= N; ++j) {
-                if (data_1d[i * N + i + j] != Float(0)) {
+                if (data_1d[i * N + i + j] != Float{0}) {
                     return false;
                 }
             }
         }
         // last 1.
-        if (data_1d[N * N - 1] != Float(1)) {
+        if (data_1d[N * N - 1] != Float{1}) {
             return false;
         }
         return true;
@@ -165,7 +165,7 @@ public:
                 for (std::size_t k{}; k < N - 1; ++k)
                     sub[{j, k}] = this->data[j + 1][k < i ? k : k + 1];
 
-            Float sign = (i & 1) ? Float(-1) : Float(1);
+            Float sign = (i & 1) ? Float{-1} : Float{1};
             det += sign * this->data[0][i] * sub.determinant();
         }
         return det;
@@ -198,10 +198,10 @@ constexpr Float SquareMatrix<1>::determinant() const {
 }
 template <>
 constexpr SquareMatrix<1> SquareMatrix<1>::inverse() const {
-    if (this->data[0][0] == Float(0)) {
+    if (this->data[0][0] == Float{0}) {
         return SquareMatrix<1>{};
     }
-    std::array<Float, 1> arr = { Float(1) / this->data[0][0] };
+    std::array<Float, 1> arr = { Float{1} / this->data[0][0] };
     return SquareMatrix<1>{arr};
 }
 
@@ -219,7 +219,7 @@ constexpr SquareMatrix<2> SquareMatrix<2>::inverse() const {
     if (det == 0) {
         return SquareMatrix<2>{};
     }
-    Float inv_det = Float(1) / det;
+    Float inv_det = Float{1} / det;
 
     std::array<Float, 4> arr {
          this->data[1][1], -this->data[0][1],
@@ -247,7 +247,7 @@ constexpr SquareMatrix<3> SquareMatrix<3>::inverse() const {
     if (det == 0) {
         return SquareMatrix<3>{};
     }
-    Float inv_det = Float(1) / det;
+    Float inv_det = Float{1} / det;
 
     std::array<Float, 9> arr {
         crossProductDifference(this->data[1][1], this->data[1][2], this->data[2][1], this->data[2][2]),
@@ -319,7 +319,7 @@ constexpr SquareMatrix<4> SquareMatrix<4>::inverse() const {
     if (det == 0) {
         return SquareMatrix<4>{};
     }
-    Float inv_det = Float(1) / det;
+    Float inv_det = Float{1} / det;
 
     // The adjacent matrix.
     std::array<Float, 16> arr {

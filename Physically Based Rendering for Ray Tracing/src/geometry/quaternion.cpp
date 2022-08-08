@@ -23,7 +23,7 @@ Quaternion& Quaternion::operator*=(Float f) {
     return *this;
 }
 Quaternion& Quaternion::operator/=(Float f) {
-    assert(f != Float(0));
+    assert(f != Float{0});
     Float inv_f = Float{1} / f;
     this->w *= inv_f;
     this->u *= inv_f;
@@ -77,11 +77,11 @@ Quaternion normalized(Quaternion const& rhs) {
 }
 
 Float angleBetween(Quaternion const& lhs, Quaternion const& rhs) {
-    if (dot(lhs, rhs) < Float(0)) {
-        return PI - Float(2) * std::asin((lhs + rhs).norm() / Float(2));
+    if (dot(lhs, rhs) < Float{0}) {
+        return PI - Float{2} * std::asin((lhs + rhs).norm() / Float{2});
     }
     else {
-        return Float(2) * std::asin((rhs - lhs).norm() / Float(2));
+        return Float{2} * std::asin((rhs - lhs).norm() / Float{2});
     }
 }
 
@@ -89,7 +89,7 @@ Quaternion slerp(Float t, Quaternion const& lhs, Quaternion const& rhs) {
     Float angle = angleBetween(lhs, rhs);
     Float sinc_angle = sinc(angle);
     return (
-        lhs * (Float(1) - t) * sinc((Float(1) - t) * angle) / sinc_angle + rhs * t * sinc(t * angle) / sinc_angle
+        lhs * (Float{1} - t) * sinc((Float{1} - t) * angle) / sinc_angle + rhs * t * sinc(t * angle) / sinc_angle
     );
 }
 

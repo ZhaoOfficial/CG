@@ -11,7 +11,7 @@ struct Ray {
         Point3f const& o = Point3f{},
         Vector3f const& d = Vector3f{},
         Float t_max = Infinity,
-        Float time = Float(0.0),
+        Float time = Float{0},
         Medium const* medium = nullptr
     ) noexcept;
     // @return p: p = o + d * t

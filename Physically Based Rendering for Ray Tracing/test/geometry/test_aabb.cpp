@@ -76,7 +76,7 @@ int main(int argc, char **argv) {
             std::cout << "corners = " << box2.corner(0) << ' ' << box2.corner(1) << ' ' << box2.corner(2) << ' ' << box2.corner(3) << std::endl;
             assert(box1.empty() == true and box2.empty() == false);
             assert((diag == Vector2f{ 2, 2 }));
-            assert(measure == Float(4));
+            assert(measure == Float{4});
             assert((norm_coord == Vector2f{ 0.5, 0.5 }));
             assert((real_coord == Point2f{ 2, 3 }));
             assert((box3 == Bbox2f{ Point2f{ 1, 2 }, Point2f{ 5, 6 } }));
@@ -153,8 +153,8 @@ int main(int argc, char **argv) {
             std::cout << "corners = " << box2.corner(0) << ' ' << box2.corner(1) << ' ' << box2.corner(2) << ' ' << box2.corner(3) << ' ' << box2.corner(4) << ' ' << box2.corner(5) << ' ' << box2.corner(6) << ' ' << box2.corner(7) << std::endl;
             assert(box1.empty() == true and box2.empty() == false);
             assert((diag == Vector3f{ 3, 3, 3 }));
-            assert(measure == Float(27));
-            assert((norm_coord == Vector3f{ 1, 1, 1 } / Float(3)));
+            assert(measure == Float{27});
+            assert((norm_coord == Vector3f{ 1, 1, 1 } / Float{3}));
             assert((real_coord == Point3f{ 2, 3, 4 }));
             assert((box3 == Bbox3f{ Point3f{ 1, 2, 3 }, Point3f{ 7, 8, 9 } }));
             assert((box3 == box4));

@@ -1,3 +1,4 @@
+#include <fmt/ranges.h>
 #include "geometry/ray.h"
 
 PBRT_NAMESPACE_START
@@ -15,7 +16,8 @@ Point3f Ray::operator()(Float t) const {
 }
 
 std::ostream& operator<<(std::ostream& out, Ray const& r) {
-    out << "[o = " << r.o << ", d = " << r.d << ", t_max = " << r.t_max << ", time = " << r.time << "]";
+    out << "[o = " << r.o << ", d = " << r.d 
+        << fmt::format(", t_max = {}, time = {}]", r.t_max, r.time);
     return out;
 }
 

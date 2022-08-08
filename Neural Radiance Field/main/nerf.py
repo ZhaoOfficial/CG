@@ -4,29 +4,19 @@ import os
 import sys
 import time
 
-sys.path.append(os.pardir)
-
 import tqdm
 import torch
 import torch.nn as nn
 from torch.utils.tensorboard import SummaryWriter
 from torch.utils.data import DataLoader
 
+sys.path.append(os.pardir)
 from utils import logger
 from model import makeModel, makeLossFunction, makeOptimizer, makeScheduer
 from dataset import makeTrainLoader
+from option.nerf_opt import parseArgument
 
 logger = logger.Logger("main/training")
-
-def parseArgument() -> argparse.Namespace:
-    description = "This file is the entrance of training nerf. Try to get help by using -h."
-    parser = argparse.ArgumentParser(description=description)
-    parser.add_argument("-c", "--config", default='', help="The path to the configuration file for training nerf.")
-    parser.add_argument("-g", "--gpu", type=int, default=0, help="The gpu id for training nerf.")
-    parser.add_argument("-r", "--resume", type=int, default=0, help="Train from the specified iteration, 0 for starting from the scratch, -1 for starting from the maximum iteration that is saved.")
-
-    args = parser.parse_args()
-    return args
 
 def makeConfig(args: argparse.Namespace) -> ConfigParser:
     assert os.path.exists(args.config), "Can not find configuration file with path {}".format(args.config)

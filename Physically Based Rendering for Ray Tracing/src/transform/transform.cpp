@@ -6,15 +6,15 @@ PBRT_NAMESPACE_START
 
 // Constructor and destructor
 Transform::Transform(SquareMatrix<4> const& mat) : mat{mat} {
-    assert(mat.determinant() != Float(0));
+    assert(mat.determinant() != Float{0});
     this->inv_mat = mat.inverse();
 }
 Transform::Transform(std::array<Float, 16> const& arr) : mat{arr} {
-    assert(mat.determinant() != Float(0));
+    assert(mat.determinant() != Float{0});
     this->inv_mat = mat.inverse();
 }
 Transform::Transform(std::array<std::array<Float, 4>, 4> const& arr) : mat{arr} {
-    assert(mat.determinant() != Float(0));
+    assert(mat.determinant() != Float{0});
     this->inv_mat = mat.inverse();
 }
 Transform::Transform(SquareMatrix<4> const& mat, SquareMatrix<4> const& inv_mat) : mat{mat}, inv_mat{inv_mat} {}
@@ -46,9 +46,9 @@ bool Transform::hasScale(Float tolerance) const {
     Float y = this->operator()(Vector3f{0, 1, 0}).squareNorm();
     Float z = this->operator()(Vector3f{0, 0, 1}).squareNorm();
     return (
-        std::abs(x - Float(1.0)) > tolerance ||
-        std::abs(y - Float(1.0)) > tolerance ||
-        std::abs(z - Float(1.0)) > tolerance
+        std::abs(x - Float{1}) > tolerance ||
+        std::abs(y - Float{1}) > tolerance ||
+        std::abs(z - Float{1}) > tolerance
     );
 }
 
@@ -81,9 +81,9 @@ Transform translate(Vector3f const& T) {
 }
 
 Transform scale(Vector3f const& S) {
-    assert(S.x != Float(0));
-    assert(S.y != Float(0));
-    assert(S.z != Float(0));
+    assert(S.x != Float{0});
+    assert(S.y != Float{0});
+    assert(S.z != Float{0});
     return Transform{ std::array<Float, 16> {
         S.x, 0,   0,   0,
         0,   S.y, 0,   0,

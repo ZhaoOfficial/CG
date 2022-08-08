@@ -28,8 +28,8 @@ int main(int argc, char **argv) {
             //! M1_1[{0, 0}] is ok.
             debugOutput(M1_1[(Vector2<std::size_t> {0, 0})]);
             debugOutput(M1_2[(Vector2<std::size_t> {0, 0})]);
-            assert(M1_1[(Vector2<std::size_t> {0, 0})] == Float(1.5));
-            assert(M1_2[(Vector2<std::size_t> {0, 0})] == Float(2.5));
+            assert(M1_1[(Vector2<std::size_t> {0, 0})] == Float{1.5});
+            assert(M1_2[(Vector2<std::size_t> {0, 0})] == Float{2.5});
         }
         std::cout << "3. Operator overloading\n";
         {
@@ -40,9 +40,9 @@ int main(int argc, char **argv) {
 
             auto M1_3 = M1_1 + M1_2;
             auto M1_4 = M1_1 - M1_2;
-            auto M1_5 = M1_1 * Float(2);
-            auto M1_6 = Float(2) * M1_1;
-            auto M1_7 = M1_1 / Float(2);
+            auto M1_5 = M1_1 * Float{2};
+            auto M1_6 = Float{2} * M1_1;
+            auto M1_7 = M1_1 / Float{2};
 
             debugOutput(M1_3);
             debugOutput(M1_4);
@@ -55,11 +55,11 @@ int main(int argc, char **argv) {
             debugOutput(M1_6[(Vector2<std::size_t> {0, 0})]);
             debugOutput(M1_7[(Vector2<std::size_t> {0, 0})]);
 
-            assert(M1_3[(Vector2<std::size_t> {0, 0})] == Float(4.0));
-            assert(M1_4[(Vector2<std::size_t> {0, 0})] == Float(-1.0));
-            assert(M1_5[(Vector2<std::size_t> {0, 0})] == Float(3.0));
-            assert(M1_6[(Vector2<std::size_t> {0, 0})] == Float(3.0));
-            assert(M1_7[(Vector2<std::size_t> {0, 0})] == Float(0.75));
+            assert(M1_3[(Vector2<std::size_t> {0, 0})] == Float{4.0});
+            assert(M1_4[(Vector2<std::size_t> {0, 0})] == Float{-1.0});
+            assert(M1_5[(Vector2<std::size_t> {0, 0})] == Float{3.0});
+            assert(M1_6[(Vector2<std::size_t> {0, 0})] == Float{3.0});
+            assert(M1_7[(Vector2<std::size_t> {0, 0})] == Float{0.75});
             assert(M1_1 != M1_2);
             assert(M1_1 < M1_2);
             assert(!(M1_1 < M1_1));
@@ -87,10 +87,10 @@ int main(int argc, char **argv) {
 
             assert(M1_1 == M1_2);
             assert(M1_3.isIdentity());
-            assert(det1 == Float(0));
-            assert(det2 == Float(1));
+            assert(det1 == Float{0});
+            assert(det2 == Float{1});
             assert(M1_4 == M1_3);
-            assert(M1_5[(Vector2<std::size_t> {0, 0})] == Float(1));
+            assert(M1_5[(Vector2<std::size_t> {0, 0})] == Float{1});
         }
     }
 
@@ -115,8 +115,8 @@ int main(int argc, char **argv) {
 
             debugOutput(M2_1);
             debugOutput(M2_2);
-            assert(M2_1[(Vector2<std::size_t> {1, 0})] == Float(3.5));
-            assert(M2_2[(Vector2<std::size_t> {1, 0})] == Float(5.0));
+            assert(M2_1[(Vector2<std::size_t> {1, 0})] == Float{3.5});
+            assert(M2_2[(Vector2<std::size_t> {1, 0})] == Float{5.0});
         }
         std::cout << "3. Operator overloading\n";
         {
@@ -130,9 +130,9 @@ int main(int argc, char **argv) {
 
             auto M2_3 = M2_1 + M2_2;
             auto M2_4 = M2_1 - M2_2;
-            auto M2_5 = M2_1 * Float(2);
-            auto M2_6 = Float(2) * M2_1;
-            auto M2_7 = M2_1 / Float(2);
+            auto M2_5 = M2_1 * Float{2};
+            auto M2_6 = Float{2} * M2_1;
+            auto M2_7 = M2_1 / Float{2};
 
             debugOutput(M2_3);
             debugOutput(M2_4);
@@ -140,11 +140,11 @@ int main(int argc, char **argv) {
             debugOutput(M2_6);
             debugOutput(M2_7);
 
-            assert(M2_3[(Vector2<std::size_t> {0, 1})] == Float(4.5));
-            assert(M2_4[(Vector2<std::size_t> {0, 1})] == Float(0.5));
-            assert(M2_5[(Vector2<std::size_t> {0, 1})] == Float(5.0));
-            assert(M2_6[(Vector2<std::size_t> {0, 1})] == Float(5.0));
-            assert(M2_7[(Vector2<std::size_t> {0, 1})] == Float(1.25));
+            assert(M2_3[(Vector2<std::size_t> {0, 1})] == Float{4.5});
+            assert(M2_4[(Vector2<std::size_t> {0, 1})] == Float{0.5});
+            assert(M2_5[(Vector2<std::size_t> {0, 1})] == Float{5.0});
+            assert(M2_6[(Vector2<std::size_t> {0, 1})] == Float{5.0});
+            assert(M2_7[(Vector2<std::size_t> {0, 1})] == Float{1.25});
             assert(M2_1 != M2_2);
             assert(M2_1 < M2_2);
             assert(!(M2_2 < M2_1));
@@ -175,10 +175,10 @@ int main(int argc, char **argv) {
 
             assert(M2_1 == M2_2);
             assert(not M2_3.isIdentity());
-            assert(det1 == Float(0));
-            assert(det2 == Float(3));
-            assert(M2_4[(Vector2<std::size_t> {0, 0})] == Float(4) / Float(3));
-            assert(M2_5[(Vector2<std::size_t> {1, 0})] == Float(2));
+            assert(det1 == Float{0});
+            assert(det2 == Float{3});
+            assert(M2_4[(Vector2<std::size_t> {0, 0})] == Float{4} / Float{3});
+            assert(M2_5[(Vector2<std::size_t> {1, 0})] == Float{2});
         }
     }
 
@@ -204,8 +204,8 @@ int main(int argc, char **argv) {
 
             debugOutput(M3_1);
             debugOutput(M3_2);
-            assert(M3_1[(Vector2<std::size_t> {1, 2})] == Float(6.5));
-            assert(M3_2[(Vector2<std::size_t> {1, 2})] == Float(-1));
+            assert(M3_1[(Vector2<std::size_t> {1, 2})] == Float{6.5});
+            assert(M3_2[(Vector2<std::size_t> {1, 2})] == Float{-1});
         }
         std::cout << "3. Operator overloading\n";
         {
@@ -220,9 +220,9 @@ int main(int argc, char **argv) {
 
             auto M3_3 = M3_1 + M3_2;
             auto M3_4 = M3_1 - M3_2;
-            auto M3_5 = M3_1 * Float(2);
-            auto M3_6 = Float(2) * M3_1;
-            auto M3_7 = M3_1 / Float(2);
+            auto M3_5 = M3_1 * Float{2};
+            auto M3_6 = Float{2} * M3_1;
+            auto M3_7 = M3_1 / Float{2};
 
             debugOutput(M3_3);
             debugOutput(M3_4);
@@ -230,11 +230,11 @@ int main(int argc, char **argv) {
             debugOutput(M3_6);
             debugOutput(M3_7);
 
-            assert(M3_3[(Vector2<std::size_t> {2, 1})] == Float(9.5));
-            assert(M3_4[(Vector2<std::size_t> {2, 1})] == Float(7.5));
-            assert(M3_5[(Vector2<std::size_t> {2, 1})] == Float(17));
-            assert(M3_6[(Vector2<std::size_t> {2, 1})] == Float(17));
-            assert(M3_7[(Vector2<std::size_t> {2, 1})] == Float(4.25));
+            assert(M3_3[(Vector2<std::size_t> {2, 1})] == Float{9.5});
+            assert(M3_4[(Vector2<std::size_t> {2, 1})] == Float{7.5});
+            assert(M3_5[(Vector2<std::size_t> {2, 1})] == Float{17});
+            assert(M3_6[(Vector2<std::size_t> {2, 1})] == Float{17});
+            assert(M3_7[(Vector2<std::size_t> {2, 1})] == Float{4.25});
             assert(M3_1 != M3_2);
             assert(M3_1 < M3_2);
             assert(!(M3_1 < M3_1));
@@ -266,10 +266,10 @@ int main(int argc, char **argv) {
 
             assert(M3_1 == M3_2);
             assert(not M3_3.isIdentity());
-            assert(det1 == Float(0));
-            assert(det2 == Float(2.5));
-            assert(M3_4[(Vector2<std::size_t> {1, 2})] == Float(2));
-            assert(M3_5[(Vector2<std::size_t> {1, 2})] == Float(1));
+            assert(det1 == Float{0});
+            assert(det2 == Float{2.5});
+            assert(M3_4[(Vector2<std::size_t> {1, 2})] == Float{2});
+            assert(M3_5[(Vector2<std::size_t> {1, 2})] == Float{1});
         }
     }
 
@@ -296,8 +296,8 @@ int main(int argc, char **argv) {
 
             debugOutput(M4_1);
             debugOutput(M4_2);
-            assert(M4_1[(Vector2<std::size_t> {2, 3})] == Float(12.5));
-            assert(M4_2[(Vector2<std::size_t> {2, 3})] == Float(-1));
+            assert(M4_1[(Vector2<std::size_t> {2, 3})] == Float{12.5});
+            assert(M4_2[(Vector2<std::size_t> {2, 3})] == Float{-1});
         }
         std::cout << "3. Operator overloading\n";
         {
@@ -313,9 +313,9 @@ int main(int argc, char **argv) {
 
             auto M4_3 = M4_1 + M4_2;
             auto M4_4 = M4_1 - M4_2;
-            auto M4_5 = M4_1 * Float(2);
-            auto M4_6 = Float(2) * M4_1;
-            auto M4_7 = M4_1 / Float(2);
+            auto M4_5 = M4_1 * Float{2};
+            auto M4_6 = Float{2} * M4_1;
+            auto M4_7 = M4_1 / Float{2};
 
             debugOutput(M4_3);
             debugOutput(M4_4);
@@ -323,11 +323,11 @@ int main(int argc, char **argv) {
             debugOutput(M4_6);
             debugOutput(M4_7);
 
-            assert(M4_3[(Vector2<std::size_t> {1, 3})] == Float(10.5));
-            assert(M4_4[(Vector2<std::size_t> {1, 3})] == Float(6.5));
-            assert(M4_5[(Vector2<std::size_t> {1, 3})] == Float(17));
-            assert(M4_6[(Vector2<std::size_t> {1, 3})] == Float(17));
-            assert(M4_7[(Vector2<std::size_t> {1, 3})] == Float(4.25));
+            assert(M4_3[(Vector2<std::size_t> {1, 3})] == Float{10.5});
+            assert(M4_4[(Vector2<std::size_t> {1, 3})] == Float{6.5});
+            assert(M4_5[(Vector2<std::size_t> {1, 3})] == Float{17});
+            assert(M4_6[(Vector2<std::size_t> {1, 3})] == Float{17});
+            assert(M4_7[(Vector2<std::size_t> {1, 3})] == Float{4.25});
             assert(M4_1 != M4_2);
             assert(M4_1 < M4_2);
             assert(!(M4_1 < M4_1));
@@ -360,10 +360,10 @@ int main(int argc, char **argv) {
 
             assert(M4_1 == M4_2);
             assert(not M4_3.isIdentity());
-            assert(det1 == Float(0));
-            assert(det2 == Float(-1));
-            assert(M4_4[(Vector2<std::size_t> {1, 2})] == Float(20));
-            assert(M4_5[(Vector2<std::size_t> {1, 2})] == Float(1));
+            assert(det1 == Float{0});
+            assert(det2 == Float{-1});
+            assert(M4_4[(Vector2<std::size_t> {1, 2})] == Float{20});
+            assert(M4_5[(Vector2<std::size_t> {1, 2})] == Float{1});
         }
     }
 

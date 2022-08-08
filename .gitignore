@@ -7,6 +7,7 @@ image
 pbrt-v3
 pbrt-v4
 Ray Tracing Embree
+__pycache__
 .vscode
 .vs
 .obsidian

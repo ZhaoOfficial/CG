@@ -5,6 +5,7 @@
 #include <cmath>
 #include <type_traits>
 
+#include <fmt/core.h>
 #include "math/arithmetic.h"
 #include "../common.h"
 
@@ -91,7 +92,7 @@ struct Tuple2 {
     }
     //* Output operator
     friend std::ostream& operator<<(std::ostream& out, Tuple2 const& rhs) {
-        out << "[" << rhs.x << ", " << rhs.y << "]";
+        out << fmt::format("[{}, {}]", rhs.x, rhs.y);
         return out;
     }
     //! Operator overloading
