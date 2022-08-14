@@ -12,7 +12,7 @@
 ```bash
 conda create -n nerf python=3.9
 conda activate nerf
-conda install pytorch torchvision torchaudio cudatoolkit=11.3 -c pytorch
+conda install pytorch torchvision torchaudio cudatoolkit=11.6 -c pytorch -c conda-forge
 ```
 
 ## 1 前瞻
@@ -38,3 +38,19 @@ NeRF 本质是 Neural Volume Rendering。对于 Volume Rendering，我们通常�
 
 ## 4 网络模块
 
+### 4.1 编码模块
+
+编码器的作用是将低维的坐标输入映射到高维编码空间。由于神经网络倾向于学习低频的信息，编码操作使得网络能够区分空间上相邻的两个点。
+
+#### 4.1.1 Positional Encoder
+
+Positional Encoding 是用一系列的 $\sin$ 和 $\cos$ 函数来编码低维输入，具体的数学表达形式为：
+$$
+(x,y,z)\mapsto(\\
+\sin(2^0x),\sin(2^1x),\dots,\sin(2^Lx),\\
+\cos(2^0x),\cos(2^1x),\dots,\cos(2^Lx),\\
+\sin(2^0y),\dots,\cos(2^0y),\dots,\\
+\sin(2^0z),\dots,\cos(2^0z),\dots\\
+)
+$$
+其中 $(x,y,z)$ 既可以表示坐标，也可以表示方向。在 NeRF 原文中，对于坐标的编码频率为 $L=10$，对于方向的编码频率为 $L=4$。

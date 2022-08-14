@@ -1,16 +1,14 @@
-from configparser import ConfigParser
-
 import torch
 import torch.nn as nn
 
-from .pos_enc import PositionalEncoder
+from ..encoding import make_encoder
 from utils import logger
 
 logger = logger.Logger("model/scenenet")
 
 class SceneNet(nn.Module):
     """NeRF, MLP represented scene."""
-    def __init__(self, config: ConfigParser):
+    def __init__(self, config: dict):
         super(SceneNet, self).__init__()
 
         mlp_width = config.getint("model", "mlp_width")
@@ -18,12 +16,12 @@ class SceneNet(nn.Module):
         self.use_dir = config.getboolean("model", "use_direction")
 
         # positional encoding for input position
-        self.pos_pos_enc = PositionalEncoder(L = 10, include_input = include_input)
+        self.pos_pos_enc = make_encoder(config["encoding"])
         pos_embed_width = self.pos_pos_enc.dimension
 
         if self.use_dir:
             # positional encoding for input direction
-            self.dir_pos_enc = PositionalEncoder(L = 4, include_input = include_input)
+            self.dir_pos_enc = make_encoder(config["dir_encoding"])
             dir_embed_width = self.dir_pos_enc.dimension
         else:
             dir_embed_width = 0

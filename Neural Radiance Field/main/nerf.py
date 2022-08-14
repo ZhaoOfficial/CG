@@ -1,5 +1,4 @@
 import argparse
-from configparser import ConfigParser
 import os
 import sys
 import time
@@ -11,21 +10,18 @@ from torch.utils.tensorboard import SummaryWriter
 from torch.utils.data import DataLoader
 
 sys.path.append(os.pardir)
-from utils import logger
+from ioutil import JsonIO
 from model import makeModel, makeLossFunction, makeOptimizer, makeScheduer
 from dataset import makeTrainLoader
 from option.nerf_opt import parseArgument
 
-logger = logger.Logger("main/training")
-
-def makeConfig(args: argparse.Namespace) -> ConfigParser:
+def makeConfig(args: argparse.Namespace) -> dict:
     assert os.path.exists(args.config), "Can not find configuration file with path {}".format(args.config)
-    config = ConfigParser()
-    config.read(args.config)
+    config = JsonIO.input(args.config)
     return config
 
 def main(
-    config: ConfigParser,
+    config: dict,
     train_loader: DataLoader,
     model: nn.Module,
     optimizer: torch.optim.Optimizer,
@@ -64,7 +60,6 @@ if __name__ == "__main__":
     config.set("dataset", "clean_ray", args.clean_ray)
 
     #* logger and tensorboard writer
-    logger.info("Configuration file path: {}".format(args.config))
     output_dir = config.get("output", "output_dir")
     swriter = SummaryWriter(log_dir=output_dir, max_queue=1)
 

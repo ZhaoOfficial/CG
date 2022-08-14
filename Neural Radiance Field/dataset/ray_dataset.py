@@ -12,9 +12,9 @@ from utils import logger
 
 logger = logger.Logger("dataset/ray_dataset")
 
-class SyntheticDataset(data.Dataset):
-    def __init__(self, config: ConfigParser) -> None:
-        super(SyntheticDataset, self).__init__()
+class RayDataset(data.Dataset):
+    def __init__(self, config: dict) -> None:
+        super(RayDataset, self).__init__()
 
         #* IO settings
         self.output_dir = config.get("output", "output_dir")

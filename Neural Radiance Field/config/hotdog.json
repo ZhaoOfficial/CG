@@ -5,7 +5,19 @@
         "sample_method": "near_far",
         "use_same_scene_net": false,
         "mlp_width": 256,
-        "include_input": true,
         "use_direction": true
+    },
+    "loss" : {
+        "name": "L2"
+    },
+    "encoding": {
+        "name": "Trigonometric",
+        "in_dim": 3,
+        "num_frequencies": 10
+    },
+    "dir_encoding": {
+        "name": "Trigonometric",
+        "in_dim": 3,
+        "num_frequencies": 4
     }
 }
