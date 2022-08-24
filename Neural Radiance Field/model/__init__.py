@@ -1,18 +1,7 @@
 from configparser import ConfigParser
-from typing import Union
 import math
 
 import torch
-import torch.nn as nn
-
-from renderer import Renderer
-from utils import logger
-
-logger = logger.Logger("model/__init__")
-
-def makeModel(config: ConfigParser) -> nn.Module:
-    model = Renderer(config)
-    return model
 
 def makeScheduer(config: ConfigParser, optimizer: torch.optim.Optimizer) -> torch.optim.lr_scheduler.LambdaLR:
     

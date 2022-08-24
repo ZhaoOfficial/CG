@@ -2,29 +2,21 @@ import torch
 import torch.nn as nn
 
 from ..encoding import make_encoder
-from utils import logger
-
-logger = logger.Logger("model/scenenet")
 
 class SceneNet(nn.Module):
     """NeRF, MLP represented scene."""
     def __init__(self, config: dict):
         super(SceneNet, self).__init__()
 
-        mlp_width = config.getint("model", "mlp_width")
-        include_input = config.getboolean("model", "include_input")
-        self.use_dir = config.getboolean("model", "use_direction")
+        mlp_width = config["mlp_width"]
 
         # positional encoding for input position
-        self.pos_pos_enc = make_encoder(config["encoding"])
-        pos_embed_width = self.pos_pos_enc.dimension
+        self.pos_encoder = make_encoder(config["encoding"])
+        pos_embed_width = self.pos_encoder.out_dim
 
-        if self.use_dir:
-            # positional encoding for input direction
-            self.dir_pos_enc = make_encoder(config["dir_encoding"])
-            dir_embed_width = self.dir_pos_enc.dimension
-        else:
-            dir_embed_width = 0
+        # positional encoding for input direction
+        self.dir_encoder = make_encoder(config["dir_encoding"])
+        dir_embed_width = self.dir_encoder.out_dim
 
         # stage 1 of NeRF MLP
         self.stage1 = nn.Sequential(
@@ -64,7 +56,10 @@ class SceneNet(nn.Module):
             nn.Sigmoid()
         )
 
-    def forward(self):
+    def forward(self, samples: torch.Tensor) -> torch.Tensor:
 
         return
-        return rgb, density
+        return {
+            "density": density,
+            "rgb": rgb
+        }

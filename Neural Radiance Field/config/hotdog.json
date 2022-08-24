@@ -13,11 +13,13 @@
     "encoding": {
         "name": "Trigonometric",
         "in_dim": 3,
-        "num_frequencies": 10
+        "num_frequencies": 10,
+        "log_sampling": true
     },
     "dir_encoding": {
         "name": "Trigonometric",
         "in_dim": 3,
-        "num_frequencies": 4
+        "num_frequencies": 4,
+        "log_sampling": true
     }
 }
