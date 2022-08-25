@@ -1,0 +1,50 @@
+{
+    "dataset": {
+        "num_coarse_sample": 64,
+        "num_fine_sample": 128,
+        "sample_method": "near_far"
+    },
+    "loss": {
+        "name": "L2"
+    },
+    "network": {
+        "stage_1_network": {
+            "mlp_width": 256,
+            "num_hiddens": 4,
+            "activation": {
+                "name": "ReLU",
+                "inplace": true
+            }
+        },
+        "stage_2_network": {
+            "mlp_width": 256,
+            "num_hiddens": 3,
+            "activation": {
+                "name": "ReLU",
+                "inplace": true
+            }
+        },
+        "rgb_network": {
+            "mlp_width": 256,
+            "num_hiddens": 1,
+            "activation": {
+                "name": "ReLU",
+                "inplace": true
+            }
+        }
+    },
+    "encoding": {
+        "pos_encoding": {
+            "name": "Trigonometric",
+            "in_dim": 3,
+            "num_frequencies": 10,
+            "log_sampling": true
+        },
+        "dir_encoding": {
+            "name": "Trigonometric",
+            "in_dim": 3,
+            "num_frequencies": 4,
+            "log_sampling": true
+        }
+    }
+}

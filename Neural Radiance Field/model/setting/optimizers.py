@@ -14,8 +14,6 @@ def make_optimizer(config: dict, model: nn.Module) -> torch.optim.Optimizer:
             params=model.parameters(), lr=lr, betas=(beta1, beta2), eps=eps, weight_decay=weight_decay
         )
     else:
-        raise KeyError(
-            "Wrong optimizer name: got `{}`.".format(optimizer_name)
-        )
+        raise KeyError("Wrong optimizer name: got `{}`.".format(optimizer_name))
 
     return optimizer

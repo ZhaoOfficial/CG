@@ -93,5 +93,23 @@ $$
 
 ### 4.2 网络模块
 
+#### 4.2.1 Encoding 
 
+#### 4.2.2 Network
+
+#### 4.2.3 Setting
+
+设置部分包含了网络训练所需的其他组分，包括：损失函数，激活函数，优化器和度量。这些组分都可以写在配置文件中，用 `make_` 开头的函数就可以解析配置文件，得到所需的组分。各组分可以任意拓展。
+
+**Losses**: 当前支持的 Loss 类型有：`SmoothL1Loss`, `MSELoss`, `HuberLoss`.
+
+**Activations**: 当前支持的 Activations 类型有：`None`(`Identity`), `Exponetial`， `ReLU`， `Sigmoid`， `Softplus`.
+
+**Optimizers**: 当前支持的 Optimizers 类型有：`Adam`, `SGD`.
+
+**Metrics**: 当前支持的 Metrics 类型有：`PSNR`.
+
+#### 4.2.4 Rendering
+
+Rendering 在深度学习中的本质是 testing。
 

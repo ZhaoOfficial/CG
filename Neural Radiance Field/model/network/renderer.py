@@ -4,7 +4,7 @@ import torch
 import torch.nn as nn
 
 from sample_ray import RaySamplerBox, RaySamplerNearFar
-from .scenenet import SceneNet
+from .nerf_network import NerfNetwork
 from utils import logger
 
 logger = logger.Logger("model/renderer")
@@ -18,11 +18,11 @@ class Renderer(nn.Module):
         self.sample_method = config.get("model", "sample_method")
 
         #* NeRF, representing the scene as an MLP
-        self.scene_net_coarse = SceneNet(config)
+        self.scene_net_coarse = NerfNetwork(config)
         if config.getbool("model", "use_same_scene_net"):
             self.scene_net_fine = self.scene_net_coarse
         else:
-            self.scene_net_fine = SceneNet(config)
+            self.scene_net_fine = NerfNetwork(config)
 
         #* Ray sampling in coarse stage
         self.sample_method = config.get("model", "sample_method")

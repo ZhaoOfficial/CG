@@ -3,22 +3,20 @@ import torch.nn as nn
 
 from ..encoding import make_encoder
 
-class SceneNet(nn.Module):
+class NerfNetwork(nn.Module):
     """NeRF, MLP represented scene."""
     def __init__(self, config: dict):
-        super(SceneNet, self).__init__()
+        super(NerfNetwork, self).__init__()
 
-        mlp_width = config["mlp_width"]
+        #* Encoder for input position
+        self.pos_encoder = make_encoder(config["encoding"]["pos_encoding"])
+        #* Encoder for input direction
+        self.dir_encoder = make_encoder(config["encoding"]["dir_encoding"])
 
-        # positional encoding for input position
-        self.pos_encoder = make_encoder(config["encoding"])
         pos_embed_width = self.pos_encoder.out_dim
 
-        # positional encoding for input direction
-        self.dir_encoder = make_encoder(config["dir_encoding"])
-        dir_embed_width = self.dir_encoder.out_dim
-
-        # stage 1 of NeRF MLP
+        #* Stage 1 of NeRF MLP
+        stage_1_config = config["network"]["stage_1_network"]
         self.stage1 = nn.Sequential(
             nn.Linear(pos_embed_width, mlp_width),
             nn.ReLU(inplace=True),
@@ -47,6 +45,8 @@ class SceneNet(nn.Module):
 
         # net for connecting stage2 and rgb
         self.feature_net = nn.Linear(mlp_width, mlp_width)
+
+        dir_embed_width = self.dir_encoder.out_dim
 
         # net for predicting rgb
         self.rgb_net = nn.Sequential(
