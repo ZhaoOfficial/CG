@@ -89,27 +89,27 @@ $$
 &=\int^{\pi/2}_{-\pi/2}[P^m_l(\cos\theta)]^2\sin\theta\mathrm{d}\theta\int^{2\pi}_0[\cos{m\phi}]^2\mathrm{d}\phi\\
 \end{align*}
 $$
-然后将 $Y^m_l(\theta,\phi)$ 化为直角坐标系下的表示 $Y^m_l(x,y,z)$，并且除以归一化系数，就得到了代码中用到的常数。
+然后将 $Y^m_l(\theta,\phi)$ 化为直角坐标系下的表示 $Y^m_l(x,y,z)$，并且除以归一化系数，就得到了代码中用到的编码方式。
 
 ### 4.2 网络模块
 
-#### 4.2.1 Encoding 
+#### 4.2.1 Network
 
-#### 4.2.2 Network
+Network 严格遵循了 NeRF 的网络设置。考虑到不同的网络的配置文件会大不相同，因此没有实现一个全局的 `make_networks` 函数，而是一个类附带一个 `make_networks` 函数。
 
-#### 4.2.3 Setting
+#### 4.2.2 Setting
 
 设置部分包含了网络训练所需的其他组分，包括：损失函数，激活函数，优化器和度量。这些组分都可以写在配置文件中，用 `make_` 开头的函数就可以解析配置文件，得到所需的组分。各组分可以任意拓展。
 
 **Losses**: 当前支持的 Loss 类型有：`SmoothL1Loss`, `MSELoss`, `HuberLoss`.
 
-**Activations**: 当前支持的 Activations 类型有：`None`(`Identity`), `Exponetial`， `ReLU`， `Sigmoid`， `Softplus`.
+**Activations**: 当前支持的 Activations 类型有：`None`(`Identity`), `Exponential`， `ReLU`， `Sigmoid`， `Softplus`.
 
 **Optimizers**: 当前支持的 Optimizers 类型有：`Adam`, `SGD`.
 
 **Metrics**: 当前支持的 Metrics 类型有：`PSNR`.
 
-#### 4.2.4 Rendering
+#### 4.2.3 Rendering
 
 Rendering 在深度学习中的本质是 testing。
 

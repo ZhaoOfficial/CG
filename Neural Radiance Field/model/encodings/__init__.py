@@ -1,6 +1,6 @@
 from .encoding import Encoder
 from .trigonometric import TrigonometricEncoder
-from .spherical_harmonics import SphericalHarmonicEncoder
+from .spherical_harmonic import SphericalHarmonicEncoder
 from utils.utils import string_case_insensitive
 
 def make_encoder(config: dict) -> Encoder:

@@ -7,10 +7,18 @@
     "loss": {
         "name": "L2"
     },
+    "optimizer": {
+        "name": "Adam",
+        "lr": 5e-4,
+        "betas": [0.9, 0.999],
+        "eps": 1e-7,
+        "weight_decay": 5e-5
+    },
     "network": {
         "stage_1_network": {
             "mlp_width": 256,
-            "num_hiddens": 4,
+            "num_layers": 5,
+            "with_last_activation": true,
             "activation": {
                 "name": "ReLU",
                 "inplace": true
@@ -18,15 +26,35 @@
         },
         "stage_2_network": {
             "mlp_width": 256,
-            "num_hiddens": 3,
+            "num_layers": 3,
+            "with_last_activation": true,
+            "activation": {
+                "name": "ReLU",
+                "inplace": true
+            }
+        },
+        "density_network": {
+            "mlp_width": 256,
+            "num_layers": 1,
+            "with_last_activation": true,
+            "activation": {
+                "name": "ReLU",
+                "inplace": true
+            }
+        },
+        "feature_network": {
+            "mlp_width": 256,
+            "num_layers": 1,
+            "with_last_activation": true,
             "activation": {
                 "name": "ReLU",
                 "inplace": true
             }
         },
         "rgb_network": {
-            "mlp_width": 256,
-            "num_hiddens": 1,
+            "mlp_width": 128,
+            "num_layers": 2,
+            "with_last_activation": false,
             "activation": {
                 "name": "ReLU",
                 "inplace": true

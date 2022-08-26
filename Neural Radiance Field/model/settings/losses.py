@@ -1,6 +1,5 @@
 from typing import Union
 
-import torch
 import torch.nn as nn
 
 from utils.utils import string_case_insensitive

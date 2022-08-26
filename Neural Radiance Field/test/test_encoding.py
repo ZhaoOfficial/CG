@@ -5,7 +5,7 @@ import unittest
 import torch
 
 sys.path.append(os.curdir)
-from model.encoding import make_encoder
+from model.encodings import make_encoder
 
 class TestCase(unittest.TestCase):
     def setUp(self):

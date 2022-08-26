@@ -7,11 +7,11 @@ import torch.nn.functional as F
 
 from utils.utils import string_case_insensitive
 
-class Exponetial(nn.Module):
+class Exponential(nn.Module):
     def forward(self, input: torch.Tensor) -> torch.Tensor:
         return torch.exp(input)
 
-def make_activation_module(config: dict) -> Union[nn.Identity, Exponetial, nn.ReLU, nn.Sigmoid, nn.Softplus]:
+def make_activation_module(config: dict) -> Union[nn.Identity, Exponential, nn.ReLU, nn.Sigmoid, nn.Softplus]:
     """Return a activation module for a given name."""
 
     name = config["name"]
@@ -21,8 +21,8 @@ def make_activation_module(config: dict) -> Union[nn.Identity, Exponetial, nn.Re
 
     if string_case_insensitive(name, "None"):
         return nn.Identity()
-    elif string_case_insensitive(name, "Exponetial"):
-        return Exponetial()
+    elif string_case_insensitive(name, "Exponential"):
+        return Exponential()
     elif string_case_insensitive(name, "ReLU"):
         return nn.ReLU(**defaults)
     elif string_case_insensitive(name, "Sigmoid"):
@@ -46,7 +46,7 @@ def make_activation_function(config: dict) -> Callable[[torch.Tensor], torch.Ten
 
     if string_case_insensitive(name, "None"):
         return lambda x: x
-    elif string_case_insensitive(name, "Exponetial"):
+    elif string_case_insensitive(name, "Exponential"):
         return torch.exp
     elif string_case_insensitive(name, "ReLU"):
         return partial(F.relu, **defaults)

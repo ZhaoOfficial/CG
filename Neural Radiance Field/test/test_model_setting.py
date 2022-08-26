@@ -6,9 +6,9 @@ import torch
 import torch.nn as nn
 
 sys.path.append(os.curdir)
-from model.setting import make_activation_module
-from model.setting import make_activation_function
-from model.setting.activations import Exponetial
+from model.settings import make_activation_module
+from model.settings import make_activation_function
+from model.settings.activations import Exponential
 
 class TestModule(unittest.TestCase):
     def setUp(self):
@@ -39,12 +39,12 @@ class TestModule(unittest.TestCase):
         output.sum().backward()
         self.assertTrue(torch.allclose(torch.ones_like(self.input), self.input.grad))
 
-    def test_exponetial(self):
+    def test_Exponential(self):
         act_config = {
-            "name": "Exponetial"
+            "name": "Exponential"
         }
         act = make_activation_module(act_config)
-        self.assertIsInstance(act, Exponetial)
+        self.assertIsInstance(act, Exponential)
         output = act(self.input)
         self.assertTrue(torch.allclose(torch.exp(self.input), output))
         output.sum().backward()
@@ -136,9 +136,9 @@ class TestFunction(unittest.TestCase):
         output.sum().backward()
         self.assertTrue(torch.allclose(torch.ones_like(self.input), self.input.grad))
 
-    def test_exponetial(self):
+    def test_Exponential(self):
         act_config = {
-            "name": "Exponetial"
+            "name": "Exponential"
         }
         act = make_activation_function(act_config)
         output = act(self.input)
