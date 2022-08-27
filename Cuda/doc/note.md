@@ -121,7 +121,11 @@ Texture caches are designed for graphics applications where memory access patter
 
 ## Chapter 8 Graphics Interoperability
 
+### 8.2 Graphics Interoperation
+
 We can use the GPU for both rendering and general-purpose computation.
+
+**Deprecated** 教程里面会让你选择一个可以跑 CUDA 的 GPU 和 OpenGL 绑定。但现在不需要这一步了。
 
 共享数据缓冲区是 CUDA C 内核和 OpenGL 渲染之间互操作的关键组件。要在 OpenGL 和 CUDA 之间传递数据，我们首先需要创建一个可以与这两种 API 一起使用的缓冲区。
 Shared data buffers are the key component to interoperation between CUDA C  kernels and OpenGL rendering. To pass data between OpenGL and CUDA, we will  first need to create a buffer that can be used with both APIs.

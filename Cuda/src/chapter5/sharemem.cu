@@ -51,7 +51,7 @@ __global__ void dotProduct(int const N, float const* a, float const* b, float *c
     }
 }
 
-int main(int argc, char **argv) {
+int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv) {
 
     constexpr int ArraySize{33 * 1024};
     constexpr int BlocksPerGrid{std::min(32, (ArraySize + ThreadsPerBlock - 1) / ThreadsPerBlock)};
@@ -66,8 +66,8 @@ int main(int argc, char **argv) {
     HANDLE_ERROR(cudaMalloc((void**)&dev_c, BlocksPerGrid * sizeof(int)));
 
     for (int i{}; i < ArraySize; ++i) {
-        a[i] = i;
-        b[i] = i * 2;
+        a[i] = (float)i;
+        b[i] = (float)i * 2;
     }
 
     HANDLE_ERROR(cudaMemcpy(dev_a, a, ArraySize * sizeof(int), cudaMemcpyHostToDevice));

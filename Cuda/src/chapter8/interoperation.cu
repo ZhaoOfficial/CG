@@ -1,5 +1,4 @@
 // 8.2 Graphics Interoperation
-
 #include <cstdlib>
 #include <cmath>
 
@@ -8,6 +7,7 @@
 #include "cuda_gl_interop.h" 
 
 #include "common.h"
+#include "window_manager.h"
 
 void process_keyboard(GLFWwindow *window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -32,38 +32,16 @@ __global__ void kernel(uchar4* device_ptr, int x_dim, int y_dim) {
 constexpr int WINDOW_WIDTH = 1024;
 constexpr int WINDOW_HEIGHT = 1024;
 
-int main(int argc, char **argv) {
+int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv) {
 
-    // Choose a CUDA device.
-    int device_id;
-    cudaDeviceProp prop;
-
-    memset(&prop, 0, sizeof(cudaDeviceProp));
-    prop.major = 7;
-    prop.minor = 5;
-    HANDLE_ERROR(cudaChooseDevice(&device_id, &prop));
-    std::printf("ID of CUDA device closest to 7.5: %d.\n", device_id);
-    HANDLE_ERROR(cudaGLSetGLDevice(device_id));
+    // [Deprecated] Choose a CUDA device.
 
     // Initialize a OpenGL window.
     GLFWwindow *window;
-    if (!glfwInit())
-        std::cerr << "Failed to init glfw.\n";
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
-    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-    if (!(window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "CUDA-OpenGL interoperation", nullptr, nullptr)))
-        std::cerr << "Failed to create glfw window.\n";
-    glfwMakeContextCurrent(window);
-    glfwSwapInterval(1);
-    // Initialize glew
-    if (glewInit() != GLEW_OK)
-        std::cerr << "Failed to init glew";
-    std::printf("An OpenGL window has been created.\n");
+    WindowManager window_manager(window, WINDOW_WIDTH, WINDOW_HEIGHT, "CUDA-OpenGL interoperation");
 
     // OpenGL operations.
-    // Shared data buffers that can be used for both OpenGL and CUDA.
+    // Create a shared data buffers that can be used for both OpenGL and CUDA.
     unsigned int VBO;
     cudaGraphicsResource *resource;
     glGenBuffers(1, &VBO);
@@ -84,7 +62,7 @@ int main(int argc, char **argv) {
     dim3 block_size(32, 32);
     dim3 grid_size(WINDOW_WIDTH / 32, WINDOW_HEIGHT / 32);
     kernel<<<grid_size, block_size>>>(device_ptr, WINDOW_WIDTH, WINDOW_HEIGHT);
-    // TODO
+
     HANDLE_ERROR(cudaGraphicsUnmapResources(1, &resource, NULL));
 
     // Shown on window.
@@ -96,6 +74,7 @@ int main(int argc, char **argv) {
         glfwSwapBuffers(window);
     }
 
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER_ARB, 0);
     glDeleteBuffers(1, &VBO);
     return 0;
 }
