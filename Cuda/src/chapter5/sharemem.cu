@@ -1,6 +1,5 @@
 // 5.3.1 Dot Product
 #include <algorithm>
-#include <cstdio>
 #include <numeric>
 
 #include "common.h"

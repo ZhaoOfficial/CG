@@ -1,8 +1,9 @@
 // 7.3 Simulating Heat Transfer
 //! Deprecated!!!
+#include <functional>
 #include <string>
 
-#include "common.h"
+#include "cpu_anim_bitmap.h"
 
 constexpr int DIM = 1024;
 constexpr float SPEED = 0.25f;
@@ -85,19 +86,19 @@ __global__ void blend2DKernel(float *dst, int x_dim, int y_dim, bool flag) {
 
 class DataBlock {
 public:
-    DataBlock(int x_dim, int y_dim) : bitmap(x_dim, y_dim) {
-        HANDLE_ERROR(cudaMalloc((void**)&dev_in, bitmap.numPixels() * sizeof(float)));
-        HANDLE_ERROR(cudaMalloc((void**)&dev_out, bitmap.numPixels() * sizeof(float)));
-        HANDLE_ERROR(cudaMalloc((void**)&dev_const, bitmap.numPixels() * sizeof(float)));
+    DataBlock(int x_dim, int y_dim) {
+        HANDLE_ERROR(cudaMalloc((void**)&dev_in, x_dim * y_dim * sizeof(float)));
+        HANDLE_ERROR(cudaMalloc((void**)&dev_out, x_dim * y_dim * sizeof(float)));
+        HANDLE_ERROR(cudaMalloc((void**)&dev_const, x_dim * y_dim * sizeof(float)));
 
-        HANDLE_ERROR(cudaBindTexture(0, tex_in, dev_in, bitmap.numPixels() * sizeof(float)));
-        HANDLE_ERROR(cudaBindTexture(0, tex_out, dev_out, bitmap.numPixels() * sizeof(float)));
-        HANDLE_ERROR(cudaBindTexture(0, tex_const, dev_const, bitmap.numPixels() * sizeof(float)));
+        HANDLE_ERROR(cudaBindTexture(0, tex_in, dev_in, x_dim * y_dim * sizeof(float)));
+        HANDLE_ERROR(cudaBindTexture(0, tex_out, dev_out, x_dim * y_dim * sizeof(float)));
+        HANDLE_ERROR(cudaBindTexture(0, tex_const, dev_const, x_dim * y_dim * sizeof(float)));
 
         cudaChannelFormatDesc desc = cudaCreateChannelDesc<float>();
-        HANDLE_ERROR(cudaBindTexture2D(0, tex2d_in, dev_in, desc, bitmap.x_dim, bitmap.y_dim, bitmap.x_dim * sizeof(float)));
-        HANDLE_ERROR(cudaBindTexture2D(0, tex2d_out, dev_out, desc, bitmap.x_dim, bitmap.y_dim, bitmap.x_dim * sizeof(float)));
-        HANDLE_ERROR(cudaBindTexture2D(0, tex2d_const, dev_const, desc, bitmap.x_dim, bitmap.y_dim, bitmap.x_dim * sizeof(float)));
+        HANDLE_ERROR(cudaBindTexture2D(0, tex2d_in, dev_in, desc, x_dim, y_dim, x_dim * sizeof(float)));
+        HANDLE_ERROR(cudaBindTexture2D(0, tex2d_out, dev_out, desc, x_dim, y_dim, x_dim * sizeof(float)));
+        HANDLE_ERROR(cudaBindTexture2D(0, tex2d_const, dev_const, desc, x_dim, y_dim, x_dim * sizeof(float)));
     }
 
     ~DataBlock() {
@@ -114,10 +115,9 @@ public:
         HANDLE_ERROR(cudaFree(dev_const));
     }
 
-    void animate();
+    void renderFrame(uint8_t* device_ptr, int tick, int x_dim, int y_dim);
 
 public:
-    Bitmap bitmap;
     float * dev_in;
     float * dev_out;
     float * dev_const;
@@ -126,34 +126,34 @@ public:
     int frames{};
 };
 
-void DataBlock::animate() {
-    dim3 block_size(16, 16);
-    dim3 grid_size(DIM / 16, DIM / 16);
+void DataBlock::renderFrame(uint8_t* device_ptr, [[maybe_unused]] int tick, int x_dim, int y_dim) {
+    dim3 block_size(32, 8);
+    dim3 grid_size(x_dim / 32, y_dim / 8);
 
     this->timer.startTimer();
     bool flag = true;
     for (std::size_t i{}; i < 90; ++i) {
-        copyConstantKernel<<<grid_size, block_size>>>(this->dev_in, DIM, DIM);
+        copyConstantKernel<<<grid_size, block_size>>>(this->dev_in, x_dim, y_dim);
         // blend1DKernel<<<grid_size, block_size>>>(this->dev_out, DIM, DIM, flag);
-        blend2DKernel<<<grid_size, block_size>>>(this->dev_out, DIM, DIM, flag);
+        blend2DKernel<<<grid_size, block_size>>>(this->dev_out, x_dim, y_dim, flag);
         std::swap(this->dev_in, this->dev_out);
         flag = !flag;
     }
-    floatToUint8<<<grid_size, block_size>>>(this->bitmap.dev_bitmap, this->dev_out, DIM, DIM);
+    floatToUint8<<<grid_size, block_size>>>(device_ptr, this->dev_out, x_dim, y_dim);
     this->timer.stopTimer();
 
     this->total_time += this->timer.readTimer();
     ++this->frames;
-    std::printf("Average time per frame: %.3f ms\n", this->total_time / this->frames);
+    std::printf("\rAverage time per frame: %.3f ms", this->total_time / this->frames);
 }
 
-int main(int argc, char **argv) {
-    PathChecker::checkPath(argc, argv);
+int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv) {
     DataBlock data(DIM, DIM);
+    CPUAnimBitmap bitmap(DIM, DIM, "", nullptr);
 
     {
         // Initialize the constant area.
-        float * temp = new float[data.bitmap.numPixels()]{};
+        float * temp = new float[DIM * DIM]{};
         for (std::size_t y{300}; y < 600; ++y) {
             for (std::size_t x{300}; x < 600; ++x) {
                 temp[x + y * DIM] = MAX_TEMP;
@@ -168,7 +168,7 @@ int main(int argc, char **argv) {
                 temp[x + y * DIM] = MIN_TEMP;
             }
         }
-        HANDLE_ERROR(cudaMemcpy(data.dev_const, temp, data.bitmap.numPixels() * sizeof(float), cudaMemcpyHostToDevice));
+        HANDLE_ERROR(cudaMemcpy(data.dev_const, temp, DIM * DIM * sizeof(float), cudaMemcpyHostToDevice));
 
         // Initialize the input area.
         for (std::size_t y{800}; y < DIM; ++y) {
@@ -176,16 +176,12 @@ int main(int argc, char **argv) {
                 temp[x + y * DIM] = MAX_TEMP;
             }
         }
-        HANDLE_ERROR(cudaMemcpy(data.dev_in, temp, data.bitmap.numPixels() * sizeof(float), cudaMemcpyHostToDevice));
+        HANDLE_ERROR(cudaMemcpy(data.dev_in, temp, DIM * DIM * sizeof(float), cudaMemcpyHostToDevice));
         delete[] temp;
     }
 
-    // Start animation
-    for (int tick{}; tick < 400; ++tick) {
-        data.animate();
-        data.bitmap.memcpyDeviceToHost();
-        data.bitmap.toImage(std::string(argv[1]) + '/' + std::to_string(tick) + ".png");
-    }
+    std::function<void (uint8_t *, int, int, int)> renderFrame = std::bind(&DataBlock::renderFrame, &data, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4);
+    bitmap.animate(renderFrame);
 
     return 0;
 }

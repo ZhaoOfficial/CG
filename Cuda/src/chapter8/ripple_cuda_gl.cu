@@ -1,9 +1,5 @@
 // 8.3 GPU Ripple with Graphics Interoperability
 #include <cmath>
-#include <cstdio>
-#include <filesystem>
-#include <string>
-#include <vector>
 
 #include "gpu_anim_bitmap.h"
 
@@ -39,8 +35,7 @@ void renderFrame(uchar4* device_ptr, int tick, int x_dim, int y_dim) {
 int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv) {
     GPUAnimBitmap bitmap(DIM, DIM, "Ripple CUDA-OpenGL interoperation", nullptr);
 
-    bitmap.updateRenderFunc(renderFrame);
-    bitmap.animate();
+    bitmap.animate(renderFrame);
 
     return 0;
 }

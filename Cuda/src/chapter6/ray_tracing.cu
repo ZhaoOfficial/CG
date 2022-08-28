@@ -1,8 +1,7 @@
 // 6.3 Constant Memory
-#include <cmath>
 #include <random>
 
-#include "common.h"
+#include "cpu_anim_bitmap.h"
 
 constexpr int DIM = 4096;
 constexpr int NUM_SPHERE = 30;
@@ -57,7 +56,7 @@ __global__ void kernel(uint8_t* ptr, int x_dim, int y_dim) {
 
 int main(int argc, char **argv) {
     PathChecker::checkFilePath(argc, argv, ".png");
-    Bitmap bitmap(DIM, DIM);
+    CPUAnimBitmap bitmap(DIM, DIM, "Ray Tracing", nullptr);
     Timer timer;
 
     // Startup
@@ -86,9 +85,8 @@ int main(int argc, char **argv) {
     // Rendering
     dim3 block_size(16, 16);
     dim3 grid_size(DIM / 16, DIM / 16);
-    kernel<<<grid_size, block_size>>>(bitmap.dev_bitmap, DIM, DIM);
+    kernel<<<grid_size, block_size>>>(bitmap.gpu_bitmap, DIM, DIM);
 
-    bitmap.memcpyDeviceToHost();
     timer.stopTimer();
 
     // 5~6 ms

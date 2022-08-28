@@ -1,7 +1,5 @@
 // 4.2.2 A Fun Example
-#include <cmath>
-
-#include "common.h"
+#include "cpu_anim_bitmap.h"
 
 constexpr int DIM = 4096;
 
@@ -66,12 +64,11 @@ __global__ void kernel(uint8_t *ptr, int x_dim, int y_dim) {
 
 int main(int argc, char **argv) {
     PathChecker::checkFilePath(argc, argv, ".png");
-    Bitmap bitmap(DIM, DIM);
+    CPUAnimBitmap bitmap(DIM, DIM, "Julia Set", nullptr);
     dim3 block_size(16, 16);
     dim3 grid_size(32, 32);
 
-    kernel<float><<<grid_size, block_size>>>(bitmap.dev_bitmap, DIM, DIM);
-    bitmap.memcpyDeviceToHost();
+    kernel<float><<<grid_size, block_size>>>(bitmap.gpu_bitmap, DIM, DIM);
     bitmap.toImage(argv[1]);
 
     return 0;

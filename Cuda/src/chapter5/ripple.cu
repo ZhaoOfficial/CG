@@ -1,11 +1,7 @@
 // 5.2.2 GPU Ripple Using Threads
 #include <cmath>
-#include <cstdio>
-#include <filesystem>
-#include <string>
-#include <vector>
 
-#include "common.h"
+#include "cpu_anim_bitmap.h"
 
 constexpr int DIM = 1024;
 
@@ -31,19 +27,16 @@ __global__ void kernel(uint8_t *ptr, int tick, int x_dim, int y_dim) {
     }
 }
 
-int main(int argc, char **argv) {
-    PathChecker::checkPath(argc, argv);
-    Bitmap bitmap(DIM, DIM);
-    dim3 block_size(16, 16);
-    dim3 grid_size(32, 32);
+void renderFrame(uint8_t* device_ptr, int tick, int x_dim, int y_dim) {
+    dim3 block_size(32, 16);
+    dim3 grid_size(x_dim / 32, y_dim / 16);
+    kernel<float><<<grid_size, block_size>>>(device_ptr, tick, x_dim, y_dim);
+}
 
-    for (int tick{}; tick < 60; ++tick) {
-        kernel<float><<<grid_size, block_size>>>(bitmap.dev_bitmap, tick, DIM, DIM);
-        bitmap.memcpyDeviceToHost();
-        bitmap.toImage(
-            std::string(argv[1]) + '/' + std::to_string(tick) + ".png"
-        );
-    }
+int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv) {
+    CPUAnimBitmap bitmap(DIM, DIM, "Ripple", nullptr);
+
+    bitmap.animate(renderFrame);
 
     return 0;
 }

@@ -1,6 +1,7 @@
 #ifndef _COMMON_H_
 #define _COMMON_H_
 
+#include <cmath>
 #include <cstdio>
 #include <cstddef>
 #include <cstdint>
@@ -48,25 +49,6 @@ public:
     static void checkPath(int argc, char **argv);
     // Check if the file path with required extension exists.
     static void checkFilePath(int argc, char **argv, std::string_view ext);
-};
-
-class Bitmap {
-public:
-    Bitmap(std::size_t x_dim, std::size_t y_dim);
-    ~Bitmap();
-
-    // memory copy from gpu to cpu
-    void memcpyDeviceToHost();
-    // generate an image
-    void toImage(std::string const& path) const;
-    uint8_t const* data() const;
-    std::size_t size() const;
-    std::size_t numPixels() const;
-
-public:
-    std::size_t x_dim, y_dim;
-    std::vector<uint8_t> bitmap;
-    uint8_t* dev_bitmap;
 };
 
 class Timer {

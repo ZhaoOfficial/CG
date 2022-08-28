@@ -4,7 +4,7 @@
 using namespace std;
 
 // Parameters of devices, see more in "CUDA Programming Guide".
-int main(int argc, char **argv) {
+int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv) {
 
     printf("%s starting...\n", argv[0]);
 
