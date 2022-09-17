@@ -1,9 +1,9 @@
-// 7.3 Simulating Heat Transfer
+// 8.4 Heat Transfer with Graphics Interoperability
 //! Deprecated!!!
 #include <functional>
 #include <string>
 
-#include "cpu_anim_bitmap.h"
+#include "gpu_anim_bitmap.h"
 
 constexpr int DIM = 1024;
 constexpr float SPEED = 0.25f;
@@ -115,7 +115,7 @@ public:
         HANDLE_ERROR(cudaFree(dev_const));
     }
 
-    void renderFrame(uint8_t* device_ptr, int tick, int x_dim, int y_dim);
+    void renderFrame(uchar4* device_ptr, int tick, int x_dim, int y_dim);
 
 public:
     float * dev_in;
@@ -126,7 +126,7 @@ public:
     int frames{};
 };
 
-void DataBlock::renderFrame(uint8_t* device_ptr, [[maybe_unused]] int tick, int x_dim, int y_dim) {
+void DataBlock::renderFrame(uchar4* device_ptr, [[maybe_unused]] int tick, int x_dim, int y_dim) {
     dim3 block_size(32, 8);
     dim3 grid_size(x_dim / 32, y_dim / 8);
 
@@ -149,7 +149,7 @@ void DataBlock::renderFrame(uint8_t* device_ptr, [[maybe_unused]] int tick, int 
 
 int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv) {
     DataBlock data(DIM, DIM);
-    CPUAnimBitmap bitmap(DIM, DIM, "Heat", nullptr);
+    GPUAnimBitmap bitmap(DIM, DIM, "Heat", nullptr);
 
     {
         // Initialize the constant area.
@@ -180,7 +180,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv) {
         delete[] temp;
     }
 
-    std::function<void (uint8_t *, int, int, int)> renderFrame = std::bind(&DataBlock::renderFrame, &data, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4);
+    std::function<void (uchar4 *, int, int, int)> renderFrame = std::bind(&DataBlock::renderFrame, &data, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4);
     bitmap.animate(renderFrame);
 
     return 0;

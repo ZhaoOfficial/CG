@@ -41,6 +41,29 @@ __global__ void floatToUint8(
     bitmap[pixel_id + 3] = 255;
 }
 
+__global__ void floatToUint8(
+    uchar4 *bitmap, float const *src, int x_dim, int y_dim
+) {
+    int x = threadIdx.x + blockDim.x * blockIdx.x;
+    int y = threadIdx.y + blockDim.y * blockIdx.y;
+    int coord = x + y * x_dim;
+
+    float c = src[coord];
+    int hue = (180 + (int)(360.0f * c)) % 360;
+
+    float m2{1};
+    if (c <= 0.5f) {
+        m2 = 2 * c;
+    }
+    float m1 = 2 * c - m2;
+
+    int pixel_id = coord;
+    bitmap[pixel_id].x = value(m1, m2, hue + 120);
+    bitmap[pixel_id].y = value(m1, m2, hue);
+    bitmap[pixel_id].z = value(m1, m2, hue - 120);
+    bitmap[pixel_id].w = 255;
+}
+
 void PathChecker::checkNumArgs(int argc) {
     if (argc != 2) {
         std::printf("Number of arguments must be 2.\n");

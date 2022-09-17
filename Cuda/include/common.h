@@ -39,6 +39,10 @@ __global__ void floatToUint8(
     uint8_t *bitmap, float const *src, int x_dim, int y_dim
 );
 
+__global__ void floatToUint8(
+    uchar4 *bitmap, float const *src, int x_dim, int y_dim
+);
+
 class PathChecker {
 public:
     PathChecker() = delete;

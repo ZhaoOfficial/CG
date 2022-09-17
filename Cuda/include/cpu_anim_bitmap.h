@@ -2,7 +2,6 @@
 #define _CPU_ANIM_BITMAP_
 
 #include <functional>
-#include <vector>
 
 #include "anim_bitmap.h"
 

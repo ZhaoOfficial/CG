@@ -129,3 +129,15 @@ We can use the GPU for both rendering and general-purpose computation.
 
 共享数据缓冲区是 CUDA C 内核和 OpenGL 渲染之间互操作的关键组件。要在 OpenGL 和 CUDA 之间传递数据，我们首先需要创建一个可以与这两种 API 一起使用的缓冲区。
 Shared data buffers are the key component to interoperation between CUDA C  kernels and OpenGL rendering. To pass data between OpenGL and CUDA, we will  first need to create a buffer that can be used with both APIs.
+
+### 8.4 Heat Transfer with Graphics Interoperability
+
+`CPUAnimBitmap` 的 `Draw()` 例程中的此调用会触发将 `bitmap->pixels` 中的 CPU 缓冲区复制到 GPU 以进行渲染。为此，CPU 需要停止它正在做的事情，并为每一帧启动一份到 GPU 上的副本。这需要 CPU 和 GPU 之间的同步以及额外的延迟来启动和完成通过 PCI Express 总线的传输。由于对 `glDrawPixels()` 的调用在最后一个参数中需要一个 CPU 指针，这也意味着在使用 CUDA C 内核生成一帧图像数据后，我们的第5章 ripple 程序需要将帧从 GPU 用 `cudaMemcpy()` 复制到 CPU。
+This call in the `Draw()` routine of `CPUAnimBitmap` triggers a copy of the CPU buffer in `bitmap->pixels` to the GPU for rendering. To do this, the CPU needs to stop what it’s doing and initiate a copy onto the GPU for every frame. This requires synchronization between the CPU and GPU and additional latency to initiate and complete a transfer over the PCI Express bus. Since the call to `glDrawPixels()` expects a host pointer in the last argument, this also means that after generating a frame of image data with a CUDA C kernel, our Chapter 5 ripple application needed to copy the frame from the GPU to the CPU with a `cudaMemcpy()`.
+
+我们使用 CUDA C 计算每帧渲染的图像值，但在计算完成后，我们将缓冲区复制到 CPU，然后 CPU 将缓冲区复制回 GPU 进行显示。这意味着我们在 CPU 和 GPU 之间引入了不必要的数据传输，从而影响了最佳性能。
+We used CUDA C to compute image values for our rendering in each frame, but after the computations were done, we copied the buffer to the CPU, which then copied the buffer back to the GPU for display. This means that we introduced unnecessary data transfers between the host and the device that stood between us and maximum performance.
+
+## Chapter 9 Atomic
+
+### 9.2 Compute Capability
