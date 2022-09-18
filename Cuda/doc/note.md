@@ -141,3 +141,19 @@ We used CUDA C to compute image values for our rendering in each frame, but afte
 ## Chapter 9 Atomic
 
 ### 9.2 Compute Capability
+
+#### 9.2.1 The Compute Capability of NVIDIA GPUs
+
+例如，基于 CUDA 架构构建的每个 GPU 都可以启动内核、访问全局内存以及从常量和纹理内存中读取数据。但就像不同型号的 CPU 具有不同的功能和指令集（例如，MMX、SSE 或 SSE2）一样，支持 CUDA 的图形处理器也是如此。NVIDIA 将 GPU 支持的功能称为其计算能力。
+For example, every GPU built on the CUDA Architecture can launch kernels, access global memory, and read from constant and texture memories. But just like different models of CPUs have varying capabilities and instruction sets (for example, MMX, SSE, or SSE2), so too do CUDAenabled graphics processors. NVIDIA refers to the supported features of a GPU as its compute capability.
+
+#### 9.2.2 Compiling for A Minimum Compute Capability
+
+```bash
+nvcc -arch=sm_xy
+```
+
+它通知编译器代码需要 x.y 或更高的计算能力。
+It inform the compiler that the code requires compute capability x.y or greater.
+
+## 10 Streams
