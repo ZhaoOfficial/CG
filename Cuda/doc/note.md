@@ -157,3 +157,25 @@ nvcc -arch=sm_xy
 It inform the compiler that the code requires compute capability x.y or greater.
 
 ## 10 Streams
+
+### 10.2 Paged-Locked Host Memory
+
+C 库函数 `malloc()` 分配标准的可分页主机内存，而 `cudaHostAlloc()` 分配页面锁定主机内存的缓冲区。有时称为**固定**内存，页面锁定缓冲区有一个重要属性：操作系统向我们保证它永远不会将该内存分页到磁盘，从而确保其驻留在物理内存中。这样做的必然结果是操作系统允许应用程序访问内存的物理地址变得安全，因为缓冲区不会被驱逐或重定位。
+The C library function `malloc()` allocates standard, pageable host memory, while `cudaHostAlloc()` allocates a buffer of page-locked host memory. Sometimes called **pinned** memory, page-locked buffers have an important property: The operating system guarantees us that it will never page this memory out to disk, which ensures its residency in physical memory. The corollary to this is that it becomes safe for the OS to allow an application access to the physical address of the memory, since the buffer will not be evicted or relocated.
+
+知道缓冲区的物理地址后，GPU 可以使用直接内存访问 (DMA) 将数据复制到主机或从主机复制数据。由于 DMA 复制在没有 CPU 干预的情况下进行，这也意味着 CPU 可以同时将这些缓冲区分页到磁盘或通过更新操作系统的页表来重新定位它们的物理地址。CPU 移动可分页数据的可能性意味着使用固定内存进行 DMA 复制是必不可少的。事实上，即使您尝试使用可分页内存执行内存复制，CUDA 驱动程序仍然使用 DMA 将缓冲区传输到 GPU。因此，您的复制发生了两次，首先从可分页系统缓冲区到页面锁定的“暂存”缓冲区，然后从页面锁定的系统缓冲区到 GPU。
+Knowing the physical address of a buffer, the GPU can then use direct memory access (DMA) to copy data to or from the host. Since DMA copies proceed without intervention from the CPU, it also means that the CPU could be simultaneously paging these buffers out to disk or relocating their physical address by updating the operating system’s pagetables. The possibility of the CPU moving pageable data means that using pinned memory for a DMA copy is essential. In fact, even when you attempt to perform a memory copy with pageable memory, the CUDA driver still uses DMA to transfer the buffer to the GPU. Therefore, your copy happens twice, first from a pageable system buffer to a page-locked "staging" buffer and then from the page-locked system buffer to the GPU.
+
+因此，无论何时从可分页内存执行内存复制，您都可以保证复制速度将受 PCIE 传输速度和系统前端总线速度中较低者的限制。在某些系统中，这些总线之间的巨大带宽差异确保了当用于在 GPU 和主机之间复制数据时，页面锁定的主机内存比标准可分页内存具有大约两倍的性能优势。但即使在 PCI Express 和前端总线速度相同的世界中，可分页缓冲区仍会产生额外的 CPU 管理副本的开销。
+As a result, whenever you perform memory copies from pageable memory, you guarantee that the copy speed will be bounded by the lower of the PCIE transfer speed and the system front-side bus speeds. A large disparity in bandwidth between these buses in some systems ensures that page-locked host memory enjoys roughly a twofold performance advantage over standard pageable memory when used for copying data between the GPU and the host. But even in a world where PCI Express and front-side bus speeds were identical, pageable buffers would still incur the overhead of an additional CPU-managed copy.
+
+但是，您应该抵制简单地在 `malloc` 上进行搜索和替换以将每个调用转换为使用 `cudaHostAlloc()` 的诱惑。使用固定内存是一把双刃剑。通过这样做，您有效地选择了退出虚拟内存的所有优秀功能。具体来说，运行应用程序的计算机需要为每个页面锁定缓冲区提供可用的物理内存，因为这些缓冲区永远无法换出到磁盘。这意味着您的系统将比您坚持标准的 `malloc()` 调用更快地耗尽内存。这不仅意味着您的应用程序可能会在物理内存较少的机器上开始出现故障，而且还意味着您的应用程序可能会影响系统上运行的其他应用程序的性能。
+However, you should resist the temptation to simply do a search-and-replace on `malloc` to convert every one of your calls to use `cudaHostAlloc()`. Using pinned memory is a double-edged sword. By doing so, you have effectively opted out of all the nice features of virtual memory. Specifically, the computer running the application needs to have available physical memory for every page-locked buffer, since these buffers can never be swapped out to disk. This means that your system will run out of memory much faster than it would if you stuck to standard `malloc()` calls. Not only does this mean that your application might start to fail on machines with smaller amounts of physical memory, but it means that your application can affect the performance of other applications running on the system.
+
+### 10.3 CUDA Streams
+
+CUDA 流表示按特定顺序执行的 GPU 操作队列。我们可以将内核启动、内存复制和事件启动和停止等操作添加到流中。将操作添加到流中的顺序指定了它们将执行的顺序。您可以将每个流视为 GPU 上的一个任务，这些任务有机会并行执行。
+A CUDA stream represents a queue of GPU operations that get executed in a specific order. We can add operations such as kernel launches, memory copies, and event starts and stops into a stream. The order in which operations are added to the stream specifies the order in which they will be executed. You can think of each stream as a task on the GPU, and there are opportunities for these tasks to execute in parallel.
+
+### 10.4 Using a Single CUDA Stream
+
